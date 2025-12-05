@@ -6,8 +6,7 @@ import { Router } from '@angular/router';
   template: `
       <section class="container">
         <p>
-          PlayPokerOdds is a collaborative idea and effort of
-          <a href="https://moby-it.com" target="_blank">Moby IT</a> and
+          PlayPokerOdds is a collaborative idea and effort of Moby IT and
           <a href="https://www.linkedin.com/in/farazbarmpar/" target="_blank"
             >Faraz Barbar</a
           >.</p>
