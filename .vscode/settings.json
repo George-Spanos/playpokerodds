@@ -1,19 +1,4 @@
 {
-  "deno.enablePaths": ["src/calc-odds-api","src/core"],
-  "deno.importMap": "./deno_import_map.json",
-  "eslint.workingDirectories": [
-    "src/web-api",
-    "src/ui",
-    "src/calc-odds-api"
-  ],
-  "prettier.configPath": "./src/ui/.prettierrc",
-  "[html]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[css]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  }
+  "deno.enablePaths": ["src/calc-odds-api", "src/core"],
+  "deno.enable": true
 }
