@@ -15,6 +15,17 @@ Code of this repo is found inside the `src` folder. This folder includes the fol
 - Make sure you have [docker installed](https://docs.docker.com/desktop/)
 - Run `run.sh` script.
 
+# Container images
+
+Each service publishes to GHCR under `ghcr.io/george-spanos/*` (`ppo-ui`, `ppo-api`,
+`ppo-calc-odds`) from the workflows in `.github/workflows`. They authenticate with the
+built-in `GITHUB_TOKEN`, so **this repo needs no registry secrets** - a fork or a
+transfer keeps working with nothing to re-provision. The namespace is written out in
+full rather than derived from `github.repository_owner`, because GHCR rejects
+uppercase in image references and the owner is `George-Spanos`.
+
+`docker-compose.prod.yml` pulls those same tags, so the two must be changed together.
+
 # Working on core
 
 `src/core` is a Deno project and is **not** published to any registry. The npm

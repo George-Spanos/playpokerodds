@@ -13,7 +13,7 @@ RUN npm run build:${TARGET}
 
 FROM nginx:1.23-alpine
 
-LABEL org.opencontainers.image.source=https://github.com/moby-it/playpokerodds
+LABEL org.opencontainers.image.source=https://github.com/George-Spanos/playpokerodds
 
 
 COPY --from=build /app/dist/browser /usr/share/nginx/html

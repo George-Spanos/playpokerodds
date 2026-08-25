@@ -7,6 +7,8 @@
 # local deno 2, which writes a v5 lock this image cannot read.
 FROM denoland/deno:1.41.0
 
+LABEL org.opencontainers.image.source=https://github.com/George-Spanos/playpokerodds
+
 ENV PORT=7071
 EXPOSE $PORT
 

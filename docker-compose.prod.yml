@@ -1,7 +1,7 @@
 services:
   client-ui:
     restart: always
-    image: ghcr.io/moby-it/ppo-ui:latest
+    image: ghcr.io/george-spanos/ppo-ui:latest
     ports:
       - 43001:80
     depends_on:
@@ -20,7 +20,7 @@ services:
 
   web-api:
     restart: always
-    image: ghcr.io/moby-it/ppo-api:latest
+    image: ghcr.io/george-spanos/ppo-api:latest
     ports:
       - 43002:3000
     env_file:
@@ -32,7 +32,7 @@ services:
         condition: service_started
   calc-odds-api:
     restart: always
-    image: ghcr.io/moby-it/ppo-calc-odds:latest
+    image: ghcr.io/george-spanos/ppo-calc-odds:latest
     env_file: src/calc-odds-api/.env
     ports:
       - 43003:7071

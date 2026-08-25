@@ -15,7 +15,7 @@ RUN npm run build
 
 FROM node:20.11.0-alpine
 
-LABEL org.opencontainers.image.source=https://github.com/moby-it/playpokerodds
+LABEL org.opencontainers.image.source=https://github.com/George-Spanos/playpokerodds
 
 RUN apk --no-cache add curl
 EXPOSE 3000

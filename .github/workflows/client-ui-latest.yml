@@ -14,6 +14,9 @@ on:
 jobs:
   build:
     runs-on: "ubuntu-latest"
+    permissions:
+      contents: read
+      packages: write
 
     steps:
       - uses: actions/checkout@v7
@@ -25,12 +28,12 @@ jobs:
         uses: docker/login-action@v4
         with:
           registry: ghcr.io
-          username: ${{ secrets.CONTAINER_USERNAME }}
-          password: ${{ secrets.CONTAINER_PASSWORD }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build and push container image to registry
         uses: docker/build-push-action@v7
         with:
           push: true
-          tags: ${{ secrets.REPOSITORY_NAME }}/ppo-ui:latest, ${{ secrets.REPOSITORY_NAME }}/ppo-ui:${{ github.sha }}
+          tags: ghcr.io/george-spanos/ppo-ui:latest, ghcr.io/george-spanos/ppo-ui:${{ github.sha }}
           context: ./src/ui
