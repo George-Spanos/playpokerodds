@@ -1,0 +1,29 @@
+{
+  "name": "@moby-it/poker-core",
+  "version": "2.1.3",
+  "description": "Poker odds calculation and round generation.",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moby-it/playpokerodds.git",
+    "directory": "src/core"
+  },
+  "license": "MIT",
+  "main": "./script/mod.js",
+  "module": "./esm/mod.js",
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./esm/mod.d.ts",
+        "default": "./esm/mod.js"
+      },
+      "require": {
+        "types": "./script/mod.d.ts",
+        "default": "./script/mod.js"
+      }
+    }
+  },
+  "scripts": {},
+  "private": true,
+  "_generatedBy": "dnt@dev",
+  "types": "./script/mod.d.ts"
+}

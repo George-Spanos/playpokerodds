@@ -11,8 +11,6 @@ services:
     build:
       context: src/web-api
       target: build
-      secrets:
-        - npmrc
     command: ["npx", "prisma", "migrate", "deploy"]
     env_file:
       - src/web-api/.env
@@ -58,6 +56,3 @@ services:
 volumes:
   postgres-data:
     external: true
-secrets:
-  npmrc:
-    file: .npmrc

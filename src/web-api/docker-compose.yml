@@ -2,9 +2,7 @@ services:
   web-api:
     ports:
       - 3000:3000
-    build:
-      secrets:
-      - npmrc
+    build: .
     env_file:
       - .env.docker
     depends_on:
@@ -15,8 +13,6 @@ services:
   calc-odds-api:
     build:
       context: ../calc-odds-api
-      secrets:
-      - npmrc
     environment:
       - ITERATIONS=30000
     ports:
@@ -37,6 +33,3 @@ services:
       - '5432:5432'
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
-secrets:
-  npmrc:
-    file: .npmrc

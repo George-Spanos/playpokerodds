@@ -1,7 +1,9 @@
 FROM node:20.11.0-alpine AS dependencies
 WORKDIR /src
 COPY package*.json ./
-RUN --mount=type=secret,id=npmrc,target=/root/.npmrc npm ci -f
+# poker-core is vendored from src/core (deno task build:npm), not published
+COPY vendor ./vendor
+RUN npm ci -f
 
 
 FROM dependencies AS build
@@ -22,6 +24,8 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
   CMD curl -f http://localhost:3000/health/liveness || exit 1
 
 COPY --from=build /src/node_modules ./node_modules
+# node_modules/@moby-it/poker-core is a symlink into ./vendor
+COPY --from=build /src/vendor ./vendor
 COPY --from=build /src/dist ./dist
 COPY --from=build /src/prisma ./prisma
 COPY ./package*.json ./

@@ -1,14 +1,15 @@
 # build environment
 FROM node:20.11.0-alpine AS dependencies
 WORKDIR /app
-RUN npm i -g pnpm@9.0.4
-COPY package.json pnpm-lock.yaml ./
-RUN --mount=type=secret,id=npmrc,target=/root/.npmrc pnpm install --frozen-lockfile
+COPY package.json package-lock.json ./
+# poker-core is vendored from src/core (deno task build:npm), not published
+COPY vendor ./vendor
+RUN npm ci
 
 FROM dependencies AS build
 ARG TARGET=prod
 COPY . ./
-RUN pnpm build:${TARGET}
+RUN npm run build:${TARGET}
 
 FROM nginx:1.23-alpine
 

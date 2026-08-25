@@ -5,8 +5,6 @@ services:
     build:
       context: src/ui
       dockerfile: Dockerfile
-      secrets:
-        - npmrc
       args:
         - TARGET=dev
     depends_on:
@@ -15,8 +13,6 @@ services:
     build:
       context: src/web-api
       target: build
-      secrets:
-        - npmrc
     command: ['npx', 'prisma', 'migrate', 'deploy']
     env_file:
       - src/web-api/.env.docker
@@ -28,8 +24,6 @@ services:
       - 3000:3000
     build:
       context: src/web-api
-      secrets:
-        - npmrc
     env_file:
       - src/web-api/.env.docker
     depends_on:
@@ -40,8 +34,6 @@ services:
   calc-odds-api:
     build:
       context: src/calc-odds-api
-      secrets:
-        - npmrc
     environment:
       - ITERATIONS=50000
     ports:
@@ -67,6 +59,3 @@ services:
 volumes:
   postgres-data:
     external: true
-secrets:
-  npmrc:
-    file: .npmrc
