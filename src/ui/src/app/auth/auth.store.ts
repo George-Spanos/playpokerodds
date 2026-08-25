@@ -2,7 +2,7 @@ import { Injectable, computed } from '@angular/core';
 import { BEARER_TOKEN_STORAGE_KEY } from '@app/shared/config/bearerToken';
 import { SignalStore } from '@app/shared/signal-store';
 import { produce } from 'immer';
-import { Observable, catchError, lastValueFrom, map, of, tap } from 'rxjs';
+import { catchError, lastValueFrom, map, of, tap } from 'rxjs';
 import { User } from './user';
 import { RegisterDto, SigninDto } from './user.dto';
 
