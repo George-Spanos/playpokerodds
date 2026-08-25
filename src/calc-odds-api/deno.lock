@@ -1,16 +1,5 @@
 {
   "version": "3",
-  "packages": {
-    "specifiers": {
-      "npm:@types/node": "npm:@types/node@18.16.19"
-    },
-    "npm": {
-      "@types/node@18.16.19": {
-        "integrity": "sha512-IXl7o+R9iti9eBW4Wg2hx1xQDig183jj7YLn8F7udNceyfkbn1ZxmzZXuak20gR40D7pIkIY1kYGx5VIGbaHKA==",
-        "dependencies": {}
-      }
-    }
-  },
   "remote": {
     "https://deno.land/std@0.215.0/assert/assert.ts": "bec068b2fccdd434c138a555b19a2c2393b71dfaada02b7d568a01541e67cdc5",
     "https://deno.land/std@0.215.0/assert/assertion_error.ts": "9f689a101ee586c4ce92f52fa7ddd362e86434ffdf1f848e45987dc7689976b8",
@@ -125,9 +114,6 @@
     "https://deno.land/std@0.217.0/path/windows/resolve.ts": "8dae1dadfed9d46ff46cc337c9525c0c7d959fb400a6308f34595c45bdca1972",
     "https://deno.land/std@0.217.0/path/windows/to_file_url.ts": "40e560ee4854fe5a3d4d12976cef2f4e8914125c81b11f1108e127934ced502e",
     "https://deno.land/std@0.217.0/path/windows/to_namespaced_path.ts": "4ffa4fb6fae321448d5fe810b3ca741d84df4d7897e61ee29be961a6aac89a4c",
-    "https://deno.land/std@0.218.0/dotenv/mod.ts": "0180eaeedaaf88647318811cdaa418cc64dc51fb08354f91f5f480d0a1309f7d",
-    "https://deno.land/std@0.218.0/dotenv/parse.ts": "a49ed243bd62ec26f38614042cda4e5e3a47b18337c93b0f9f8556a5c918884b",
-    "https://deno.land/std@0.218.0/dotenv/stringify.ts": "0047ad7068289735d08964046aea267a750c141b494ca0e38831b89be6c020c2",
     "https://deno.land/x/oak@v14.0.0/application.ts": "3854415b8230717f227ec50932d66a09f2e77f44334abc3f2d32c3a67ef632dc",
     "https://deno.land/x/oak@v14.0.0/body.ts": "596bbdac22270f5a024e172043b27fcf1c794a5575424dbcb502fc58b60434a8",
     "https://deno.land/x/oak@v14.0.0/content_disposition.ts": "8b8c3cb2fba7138cd5b7f82fc3b5ea39b33db924a824b28261659db7e164621e",
@@ -162,17 +148,6 @@
     "https://deno.land/x/oak_commons@0.6.1/method.ts": "819862202d471682773ac6a573dc47553acdae865121adb54a71eee1c9389771",
     "https://deno.land/x/oak_commons@0.6.1/server_sent_event.ts": "ed56b35c7c81e54ce778811c12b7797dbceafc2f841395a382b8d509d50d3d59",
     "https://deno.land/x/oak_commons@0.6.1/status.ts": "f13e0e61c2aaf5e254ca528569b03896aee89d96ebc256fa740ea7305a68f53f",
-    "https://deno.land/x/path_to_regexp@v6.2.1/index.ts": "894060567837bae8fc9c5cbd4d0a05e9024672083d5883b525c031eea940e556",
-    "https://raw.githubusercontent.com/moby-it/playpokerodds/calc-deno/src/core/src/board/board.ts": "0d4d27efe04708dcb5337ed0b1380e94ce93b80ac771a66142b8ee8cf61fa80d",
-    "https://raw.githubusercontent.com/moby-it/playpokerodds/calc-deno/src/core/src/board/boardState.ts": "528d95a2b5db63fc127686f04ed91f358a915249e610b44b6a9720154d044622",
-    "https://raw.githubusercontent.com/moby-it/playpokerodds/calc-deno/src/core/src/calculate-odds/calculate-odds.ts": "21800a97d27b8775326e6d717bc6a4314548c3c7106d532d06112b12b6eefef5",
-    "https://raw.githubusercontent.com/moby-it/playpokerodds/calc-deno/src/core/src/calculate-odds/calculator/Calculator.ts": "0a86d96e5d1d4454ddb9127d1f708fc86ebe0d7a2e92ade581a901881decd8a2",
-    "https://raw.githubusercontent.com/moby-it/playpokerodds/calc-deno/src/core/src/calculate-odds/calculator/Game.ts": "650a2316b4be0c4dd6934a7b68a980787ed8f8bf3c505e89cd6634cc41cd9389",
-    "https://raw.githubusercontent.com/moby-it/playpokerodds/calc-deno/src/core/src/calculate-odds/calculator/evaluate.ts": "036726c4e9e6802cc8b27dbc737c18adad1f20e6d705d49d6f607bb7c2d2bd50",
-    "https://raw.githubusercontent.com/moby-it/playpokerodds/calc-deno/src/core/src/calculate-odds/calculator/types.ts": "be064b794db3ba808f2bbf79523ef80b5173d60693157017622b2257487caf07",
-    "https://raw.githubusercontent.com/moby-it/playpokerodds/calc-deno/src/core/src/calculate-odds/calculator/util.ts": "4540a138c80f646ac9e4a5e39d5cc9a39e4d07a7e1d3f129662ccae3eb21c0be",
-    "https://raw.githubusercontent.com/moby-it/playpokerodds/calc-deno/src/core/src/card/card.ts": "ddb1929f2436818e7561ae86cecc93451a6463bfbbbff4ead167e550ee963383",
-    "https://raw.githubusercontent.com/moby-it/playpokerodds/calc-deno/src/core/src/hand/hand.ts": "b6a3df72ae2a541ed095466b772f3d21b124895d26780506344f7165cbd28bd3",
-    "https://raw.githubusercontent.com/moby-it/playpokerodds/calc-deno/src/core/src/round/round.ts": "3426bdde3d663bf6fe128f131bb93accccd01a54f34772787ae0a6081dc8007b"
+    "https://deno.land/x/path_to_regexp@v6.2.1/index.ts": "894060567837bae8fc9c5cbd4d0a05e9024672083d5883b525c031eea940e556"
   }
 }

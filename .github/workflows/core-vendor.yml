@@ -1,0 +1,52 @@
+name: Core - test and verify vendored build
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "src/core/**"
+      - "src/ui/vendor/poker-core/**"
+      - "src/web-api/vendor/poker-core/**"
+  workflow_dispatch:
+
+jobs:
+  core:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Test core
+        working-directory: ./src/core
+        run: deno task test
+
+      # dnt shells out to npm, which ubuntu-latest already has on PATH
+      - name: Rebuild the vendored package
+        working-directory: ./src/core
+        run: deno task build:npm
+
+      # git add first: a plain `git diff` would miss a brand new core module,
+      # whose vendored output lands as an untracked file.
+      - name: Fail if the vendored build is out of date
+        run: |
+          paths="src/ui/vendor/poker-core src/web-api/vendor/poker-core src/core/deno.lock"
+          git add -A -- $paths
+          git diff --cached --exit-code -- $paths \
+            || { echo "::error::vendored poker-core is stale - run 'deno task build:npm' in src/core and commit the result"; exit 1; }
+
+      # The version in build_npm.ts is copied into each consumer's lockfile, so
+      # bumping it without re-running npm install leaves the lockfiles behind.
+      - name: Fail if the consumer lockfiles disagree on the vendored version
+        run: |
+          version=$(node -p "require('./src/core/npm/package.json').version")
+          for lock in src/ui/package-lock.json src/web-api/package-lock.json; do
+            node -e '
+              const [lock, want] = process.argv.slice(1);
+              const entry = require("./" + lock).packages["vendor/poker-core"];
+              if (!entry) { console.error(`::error::${lock} has no vendor/poker-core entry`); process.exit(1); }
+              if (entry.version !== want) { console.error(`::error::${lock} records ${entry.version}, vendor is ${want}`); process.exit(1); }
+            ' "$lock" "$version"
+          done

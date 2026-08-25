@@ -38,5 +38,12 @@ That regenerates `src/ui/vendor/poker-core` and `src/web-api/vendor/poker-core`
 **Commit the regenerated vendor folders** — the Docker builds copy them in and
 never reach a registry for this package.
 
-Note: `src/calc-odds-api` consumes core directly as Deno source over HTTP (see
-`deno_import_map.json`) and is unaffected by this build step.
+The `.github/workflows/core-vendor.yml` workflow enforces this: it reruns the
+build on CI and fails if the committed vendor folders differ from its output, so
+a forgotten re-vendor is a red build rather than a stale image.
+
+Note: `src/calc-odds-api` is a Deno service and consumes core as Deno source
+directly, via the `"@poker-core/" -> "../core/src/"` mapping in its `deno.json`
+— no vendoring involved. Because of that its Docker build context is `src/`
+rather than `src/calc-odds-api` (see `src/.dockerignore`), and a change under
+`src/core` rebuilds it too.

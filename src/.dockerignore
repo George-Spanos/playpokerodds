@@ -1,0 +1,7 @@
+# Only calc-odds-api builds from this directory as its context; it needs core
+# as Deno source and nothing else.
+*
+!calc-odds-api
+!core
+core/npm
+core/node_modules

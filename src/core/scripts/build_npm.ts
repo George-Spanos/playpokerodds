@@ -5,7 +5,7 @@
 //
 // The generated ./npm folder is throwaway; the copies under
 // src/*/vendor/poker-core are what the consumers install via "file:".
-import { build, emptyDir } from 'jsr:@deno/dnt@^0.42.1';
+import { build, emptyDir } from 'jsr:@deno/dnt@0.42.3';
 
 const version = '2.1.3';
 

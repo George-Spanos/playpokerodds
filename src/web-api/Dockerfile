@@ -3,7 +3,7 @@ WORKDIR /src
 COPY package*.json ./
 # poker-core is vendored from src/core (deno task build:npm), not published
 COPY vendor ./vendor
-RUN npm ci -f
+RUN npm ci
 
 
 FROM dependencies AS build
