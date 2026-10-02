@@ -35,5 +35,5 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           push: true
-          tags: ghcr.io/george-spanos/ppo-ui:latest, ghcr.io/george-spanos/ppo-ui:${{ github.sha }}
+          tags: ghcr.io/george-spanos/ppo-ui:latest, ghcr.io/george-spanos/ppo-ui:stable, ghcr.io/george-spanos/ppo-ui:${{ github.sha }}
           context: ./src/ui

@@ -1,9 +1,12 @@
 services:
   client-ui:
     restart: always
-    image: ghcr.io/george-spanos/ppo-ui:latest
+    image: ghcr.io/george-spanos/ppo-ui:stable
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
     ports:
-      - 43001:80
+      - "127.0.0.1:43001:80"
+      - "[::1]:43001:80"
     depends_on:
       - web-api
 
@@ -20,9 +23,12 @@ services:
 
   web-api:
     restart: always
-    image: ghcr.io/george-spanos/ppo-api:latest
+    image: ghcr.io/george-spanos/ppo-api:stable
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
     ports:
-      - 43002:3000
+      - "127.0.0.1:43002:3000"
+      - "[::1]:43002:3000"
     env_file:
       - src/web-api/.env
     depends_on:
@@ -32,10 +38,13 @@ services:
         condition: service_started
   calc-odds-api:
     restart: always
-    image: ghcr.io/george-spanos/ppo-calc-odds:latest
+    image: ghcr.io/george-spanos/ppo-calc-odds:stable
+    labels:
+      com.centurylinklabs.watchtower.enable: "true"
     env_file: src/calc-odds-api/.env
     ports:
-      - 43003:7071
+      - "127.0.0.1:43003:7071"
+      - "[::1]:43003:7071"
     depends_on:
       - db
 
@@ -49,8 +58,6 @@ services:
       interval: 3s
       timeout: 5s
       retries: 5
-    ports:
-      - "43004:5432"
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
 volumes:

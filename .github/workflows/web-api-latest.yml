@@ -43,5 +43,5 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           push: true
-          tags: ghcr.io/george-spanos/ppo-api:latest, ghcr.io/george-spanos/ppo-api:${{ github.sha }}
+          tags: ghcr.io/george-spanos/ppo-api:latest, ghcr.io/george-spanos/ppo-api:stable, ghcr.io/george-spanos/ppo-api:${{ github.sha }}
           context: ./src/web-api

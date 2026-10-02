@@ -33,6 +33,6 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           push: true
-          tags: ghcr.io/george-spanos/ppo-calc-odds:latest, ghcr.io/george-spanos/ppo-calc-odds:${{ github.sha }}
+          tags: ghcr.io/george-spanos/ppo-calc-odds:latest, ghcr.io/george-spanos/ppo-calc-odds:stable, ghcr.io/george-spanos/ppo-calc-odds:${{ github.sha }}
           context: ./src
           file: ./src/calc-odds-api/Dockerfile
