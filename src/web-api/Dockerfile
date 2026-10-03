@@ -29,4 +29,9 @@ COPY --from=build /src/vendor ./vendor
 COPY --from=build /src/dist ./dist
 COPY --from=build /src/prisma ./prisma
 COPY ./package*.json ./
+# Run as the image's unprivileged user (security audit finding H1). HOME must be
+# writable because `npm start` writes its logs under $HOME/.npm.
+RUN chown -R node:node /src
+ENV HOME=/home/node
+USER node
 CMD ["npm","start"]

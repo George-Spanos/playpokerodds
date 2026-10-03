@@ -21,4 +21,9 @@ COPY calc-odds-api ./calc-odds-api
 WORKDIR /app/calc-odds-api
 RUN deno cache main.ts
 
+# Run as the image's unprivileged user (security audit finding H1). DENO_DIR is
+# already owned by `deno`; /app is chowned so the runtime can refresh its lock.
+RUN chown -R deno:deno /app
+USER deno
+
 CMD exec deno run --allow-net --allow-env main.ts

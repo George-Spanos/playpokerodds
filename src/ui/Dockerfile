@@ -18,9 +18,15 @@ LABEL org.opencontainers.image.source=https://github.com/George-Spanos/playpoker
 
 COPY --from=build /app/dist/browser /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Non-root runtime (security audit finding H1): nginx's pid and temp paths move
+# under /tmp via this main config, and the master drops to the image's `nginx`
+# user. Port 80 remains bindable because Docker sets
+# net.ipv4.ip_unprivileged_port_start=0 inside the container.
+COPY nginx-main.conf /etc/nginx/nginx.conf
 
 HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
   CMD curl -f http://localhost/ || exit 1
 
 EXPOSE 80
+USER nginx
 CMD ["nginx", "-g", "daemon off;"]
