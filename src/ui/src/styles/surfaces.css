@@ -48,6 +48,19 @@ body {
   padding: var(--space-4);
 }
 
+/* crawlable/accessible h1 kept visually off the chalkboard surface */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
 /* ---- play surface: three distinct zones (opponents / board / my hand) ---- */
 .play-grid {
   display: grid;

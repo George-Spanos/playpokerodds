@@ -2,10 +2,22 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Play Poker Odds!</title>
+    <title>Play Poker Odds! — Poker Equity Trainer</title>
     <base href="/" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="description" content="Forget about bets. Focus on winning chances." />
+    <meta name="description" content="Free poker equity trainer: get dealt a hand, guess your winning chances, see the true odds. Forget about bets. Focus on winning chances. Play instantly, no signup needed." />
+    <meta name="robots" content="index, follow" />
+    <link rel="canonical" href="https://playpokerodds.com/" />
+    <!-- Open Graph / Twitter -->
+    <meta property="og:site_name" content="Play Poker Odds!" />
+    <meta property="og:title" content="Play Poker Odds! — Poker Equity Trainer" />
+    <meta property="og:description" content="Free poker equity trainer: get dealt a hand, guess your winning chances, see the true odds. Play instantly, no signup needed." />
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://playpokerodds.com/" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Play Poker Odds! — Poker Equity Trainer" />
+    <meta name="twitter:description" content="Free poker equity trainer: guess your winning chances, see the true odds. Play instantly, no signup." />
+    <meta name="theme-color" content="#141c17" />
     <script defer data-domain="playpokerodds.com" src="https://moby-it.com/js/script.js"></script>
     <link rel="icon" type="image/x-icon" href="src/favicon.ico" />
     <link rel="stylesheet" href="src/styles/tokens.css" />
@@ -13,6 +25,7 @@
     <link rel="stylesheet" href="src/styles/surfaces.css" />
   </head>
   <body>
+    <h1 class="visually-hidden">Play Poker Odds! — the poker equity trainer</h1>
     <header class="top-bar">
       <nav class="chalk-nav" aria-label="Main">
         <a href="/" data-link class="brand">Play Poker Odds!</a>
@@ -23,6 +36,47 @@
       </nav>
     </header>
     <main id="outlet" class="outlet"></main>
+    <noscript>
+      <section class="panel" style="max-width:720px;margin:2rem auto;padding:2rem">
+        <h2>Forget about bets. Focus on winning chances.</h2>
+        <p>
+          Play Poker Odds! is a free poker equity trainer. You get dealt a Texas
+          Hold'em hand (plus a community board in later streets), you guess your
+          chance of winning, and the app reveals the true odds computed by a
+          50,000-iteration Monte Carlo simulation. The gap between your guess and
+          the truth is how your intuition improves.
+        </p>
+        <p>
+          Features: instant anonymous play, opponent-hand toggles, per-round
+          guess scoring, personal history and favorites, and leaderboards for
+          signed-in players.
+        </p>
+        <p><a href="https://playpokerodds.com/play">Enable JavaScript to play at playpokerodds.com/play</a></p>
+      </section>
+    </noscript>
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "WebApplication",
+        "name": "Play Poker Odds!",
+        "url": "https://playpokerodds.com",
+        "applicationCategory": "GameApplication",
+        "operatingSystem": "Web",
+        "description": "Free poker equity trainer: get dealt a hand, guess your winning chances, see the true odds computed by Monte Carlo simulation.",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "USD"
+        },
+        "featureList": [
+          "Texas Hold'em equity training",
+          "Monte Carlo odds calculation",
+          "Guess-accuracy scoring",
+          "Round history and favorites",
+          "Leaderboards"
+        ]
+      }
+    </script>
     <script type="module" src="src/js/main.js"></script>
   </body>
 </html>

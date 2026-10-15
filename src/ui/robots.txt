@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+
+# Private/user areas: crawlable pages only
+Disallow: /profile
+
+Sitemap: https://playpokerodds.com/sitemap.xml
