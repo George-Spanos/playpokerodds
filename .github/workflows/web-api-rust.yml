@@ -30,6 +30,19 @@ jobs:
             sleep 1
           done
 
+      # the answer endpoints call the odds service over HTTP; serve it from the
+      # just-built Rust crate (no Deno image involved anymore)
+      - name: Build calc-odds service
+        working-directory: ./src/calc-odds-api
+        run: cargo build --release
+
+      - name: Start calc-odds service
+        run: |
+          docker build -t ppo-calc-local ./src/calc-odds-api
+          docker run -d --name ppo-calc -p 7071:7071 ppo-calc-local
+          sleep 2
+          curl -sf http://localhost:7071/liveness
+
       - name: Unit + integration tests
         working-directory: ./src/web-api
         env:
