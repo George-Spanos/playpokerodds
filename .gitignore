@@ -1,6 +1,7 @@
 postgres-data
 .scannerwork
 .npmrc
+.agents
 secrets
 db.env
 .env
