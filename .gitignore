@@ -5,3 +5,4 @@ postgres-data
 secrets
 db.env
 .env
+.act.secrets
