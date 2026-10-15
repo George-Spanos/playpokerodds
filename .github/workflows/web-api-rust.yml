@@ -1,0 +1,47 @@
+name: Web API - Rust build and contract tests
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "src/web-api/**"
+  workflow_dispatch:
+
+jobs:
+  api:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "src/web-api"
+
+      - name: Start Postgres
+        working-directory: ./src/web-api
+        run: |
+          docker run -d --name ppo-test-db -p 5432:5432 \
+            -e POSTGRES_USER=root -e POSTGRES_PASSWORD=root -e POSTGRES_DB=gtop \
+            postgres:15.1
+          for i in $(seq 1 30); do
+            docker exec ppo-test-db pg_isready -d gtop -U root && break
+            sleep 1
+          done
+
+      - name: Unit + integration tests
+        working-directory: ./src/web-api
+        env:
+          TEST_DATABASE_URL: postgres://root:root@localhost:5432/gtop
+          JWT_SECRET: SOME_SECRET
+          CALC_ODDS_URL: http://localhost:7071/api/calcOdds
+        run: cargo test --release
+
+      - name: Lints
+        working-directory: ./src/web-api
+        run: cargo clippy -- -D warnings
+
+      - name: Release build
+        working-directory: ./src/web-api
+        run: cargo build --release

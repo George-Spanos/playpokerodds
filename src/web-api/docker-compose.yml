@@ -2,9 +2,15 @@ services:
   web-api:
     ports:
       - 3000:3000
-    build: .
-    env_file:
-      - .env.docker
+    build:
+      context: .
+      dockerfile: Dockerfile.rust
+    environment:
+      - DB_CONNECTION_STRING=postgresql://root:root@db:5432/gtop
+      - JWT_SECRET=SOME_SECRET_JWT_STUFF
+      - CALC_ODDS_URL=http://calc-odds-api:7071/api/calcOdds
+      - CALC_ODDS_KEY=somekey
+      - LEADERBOARD_MIN_GAMES=2
     depends_on:
       db:
         condition: service_healthy

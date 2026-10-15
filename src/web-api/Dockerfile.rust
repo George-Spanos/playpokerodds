@@ -1,0 +1,19 @@
+# Build stage: cargo layer caching via dummy main pre-build
+FROM rust:1-alpine AS build
+WORKDIR /build
+RUN apk add --no-cache musl-dev
+COPY Cargo.toml Cargo.lock ./
+COPY src ./src
+COPY migrations ./migrations
+ENV SQLX_OFFLINE=false
+RUN cargo build --release
+
+FROM alpine:3.20
+LABEL org.opencontainers.image.source=https://github.com/George-Spanos/playpokerodds
+RUN apk add --no-cache ca-certificates curl
+WORKDIR /app
+COPY --from=build /build/target/release/ppo-api ./ppo-api
+EXPOSE 3000
+HEALTHCHECK --interval=30s --timeout=5s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:3000/health/liveness || exit 1
+CMD ["./ppo-api"]
