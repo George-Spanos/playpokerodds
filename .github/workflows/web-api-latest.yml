@@ -12,7 +12,7 @@ on:
 
 jobs:
   test:
-    runs-on: "ubuntu-latest"
+    runs-on: "ubuntu-24.04"
     env:
       JWT_SECRET: SOMEJWTSECRET
     steps:
@@ -41,7 +41,7 @@ jobs:
         run: cargo test --release -- --test-threads=1
 
   build:
-    runs-on: "ubuntu-latest"
+    runs-on: "ubuntu-24.04"
     needs: test
     permissions:
       contents: read
