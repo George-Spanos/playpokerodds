@@ -1,4 +1,6 @@
 // Play surface: deal → guess on the chalk rail → lock-on-reveal → next deal.
+// Table reads as a poker table seen from your seat: opponents across the top,
+// community board in a drawn center strip, your hand emphasized at the bottom.
 
 import {
   fetchRound,
@@ -14,7 +16,7 @@ import {
   calculateGuessScore,
   scoreIsAccurate,
 } from '../domain/poker.js';
-import { el, handRow, cardSlot } from '../components/dom.js';
+import { el, cardSlot } from '../components/dom.js';
 
 const state = {
   round: null,
@@ -202,7 +204,7 @@ function renderTable(round) {
     {
       class: 'chalk-btn',
       text: state.playingRevealed ? 'Opponents: revealed' : 'Opponents: hidden',
-      onclick: async (e) => {
+      onclick: async () => {
         state.playingRevealed = !state.playingRevealed;
         await deal();
       },
@@ -210,30 +212,62 @@ function renderTable(round) {
   );
   const dealBtn = el('button', { class: 'chalk-btn', text: 'Deal again', onclick: deal });
 
-  const boardRow = el(
-    'div',
-    { class: 'hand-row' },
-    el('span', { class: 'hand-row__label chalk-label', text: 'Board' }),
-    el(
-      'div',
-      { class: 'board-cards' },
-      ...(round && round.board.length ? round.board.map(cardSlot) : [el('span', { class: 'chalk-label chalk-ghost', text: 'preflop — no cards yet' })])
-    )
+  // ---- zones: opponents (top) / board (middle strip) / your hand (bottom) ----
+
+  // OPPONENTS: grouped section, smaller cards, per-opponent label
+  const opponentsZone = el('section', { class: 'zone zone-opponents', 'aria-label': 'Opponents' });
+  const opponentCount = round ? round.opponentsHands.length : 0;
+  opponentsZone.append(
+    el('h4', { class: 'zone-label chalk-label', text: round ? `Opponents — ${opponentCount}` : 'Opponents' })
   );
+  if (round) {
+    const grid = el('div', { class: 'opponents-grid' });
+    round.opponentsHands.forEach((hand, i) => {
+      const hidden = hand[0] === '..';
+      grid.append(
+        el(
+          'div',
+          { class: `opponent-seat${hidden ? ' chalk-pending' : ''}` },
+          el('span', { class: 'seat-label chalk-label', text: `P${i + 1}` }),
+          el('div', { class: 'seat-cards' }, ...hand.map(cardSlot))
+        )
+      );
+    });
+    opponentsZone.append(grid);
+  } else {
+    opponentsZone.append(el('div', { class: 'chalk-label chalk-ghost', text: 'dealing…' }));
+  }
+
+  // BOARD: chalk-drawn center strip — the community area
+  const boardZone = el('section', { class: 'zone zone-board', 'aria-label': 'Community board' });
+  boardZone.append(el('h4', { class: 'zone-label chalk-label', text: 'Board' }));
+  const strip = el('div', { class: 'board-strip' });
+  const shown = round ? round.board.length : 0;
+  for (let i = 0; i < 5; i++) {
+    if (i < shown) {
+      strip.append(cardSlot(round.board[i]));
+    } else {
+      // empty community slot: faint chalk outline with street hint
+      const street = ['', 'preflop', 'preflop', 'flop+', 'turn+', 'river+'][i];
+      strip.append(el('span', { class: 'board-slot-empty', 'data-street': i <= 1 ? 'preflop' : street }));
+    }
+  }
+  boardZone.append(strip);
+
+  // YOUR HAND: bottom, biggest cards, amber label — the thing you act on
+  const myZone = el('section', { class: 'zone zone-my-hand', 'aria-label': 'Your hand' });
+  myZone.append(el('h4', { class: 'zone-label zone-label--mine chalk-label', text: 'Your hand' }));
+  if (round) {
+    myZone.append(el('div', { class: 'my-cards' }, ...round.myHand.map(cardSlot)));
+  } else {
+    myZone.append(el('div', { class: 'chalk-label chalk-ghost', text: 'dealing…' }));
+  }
 
   ui.tablePanel.append(
     el('div', { class: 'deal-bar' }, toggle, dealBtn),
-    el(
-      'div',
-      { class: 'table-zone' },
-      round ? handRow('Your hand', round.myHand) : el('div', { class: 'chalk-label', text: 'Dealing…' }),
-      boardRow,
-      ...(round
-        ? round.opponentsHands.map((hand, i) =>
-            handRow(`Opponent ${i + 1}`, hand, hand[0] === '..' ? 'chalk-pending' : '')
-          )
-        : [el('span')])
-    )
+    opponentsZone,
+    boardZone,
+    myZone
   );
 }
 

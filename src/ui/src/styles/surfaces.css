@@ -48,7 +48,7 @@ body {
   padding: var(--space-4);
 }
 
-/* ---- play surface ---- */
+/* ---- play surface: three distinct zones (opponents / board / my hand) ---- */
 .play-grid {
   display: grid;
   grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
@@ -58,36 +58,98 @@ body {
 .table-panel {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--space-3);
   padding: var(--space-4);
 }
-.table-zone {
-  flex: 1;
+
+/* zone separation: each region gets a label + its own visual weight */
+.zone {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  gap: var(--space-5);
-}
-.hand-row {
-  display: flex;
   gap: var(--space-2);
+}
+.zone-label {
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-size: var(--text-xs);
+  margin: 0;
+}
+
+/* OPPONENTS: top, small cards in seats */
+.zone-opponents .opponents-grid {
+  display: flex;
   flex-wrap: wrap;
+  gap: var(--space-2) var(--space-4);
+}
+.opponent-seat {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.opponent-seat .seat-label {
+  font-size: var(--text-xs);
+  color: var(--ink-faint);
+}
+.opponent-seat .seat-cards {
+  display: flex;
+  gap: var(--space-1);
+}
+.zone-opponents .card-slot {
+  width: 46px;
+  height: 64px;
+}
+
+/* BOARD: chalk-drawn center strip — visually distinct band */
+.zone-board .board-strip {
+  display: flex;
+  gap: var(--space-2);
   align-items: center;
+  border: var(--line) dashed var(--chalk-500);
+  border-radius: var(--radius-panel);
+  padding: var(--space-2) var(--space-3);
+  background: rgba(16, 22, 19, 0.55);
+  min-height: 104px;
 }
-.hand-row__label {
-  min-width: 9rem;
+.zone-board .card-slot {
+  width: 64px;
+  height: 89px;
 }
-.hand-cards {
+.board-slot-empty {
+  width: 64px;
+  height: 89px;
+  border: 1px dashed var(--chalk-600);
+  border-radius: var(--radius-card);
+  opacity: 0.45;
+  position: relative;
+}
+.board-slot-empty::after {
+  content: attr(data-street);
+  position: absolute;
+  inset: auto 0 4px 0;
+  text-align: center;
+  font-family: var(--font-chalk);
+  font-size: 9px;
+  color: var(--chalk-600);
+}
+
+/* MY HAND: bottom, largest cards, amber label — what you act on */
+.zone-my-hand {
+  border-top: var(--line) solid rgba(207, 214, 202, 0.25);
+  padding-top: var(--space-3);
+}
+.zone-label--mine {
+  color: var(--amber-300);
+  font-size: var(--text-sm);
+}
+.zone-my-hand .my-cards {
   display: flex;
   gap: var(--space-2);
 }
-.board-cards {
-  display: flex;
-  gap: var(--space-2);
-  min-height: 100px;
-  align-items: center;
-  flex-wrap: wrap;
+.zone-my-hand .card-slot {
+  width: 84px;
+  height: 118px;
 }
+
 .deal-bar {
   display: flex;
   justify-content: space-between;
@@ -212,9 +274,18 @@ body {
   .guess-panel {
     position: static;
   }
-  .card-slot {
-    width: 58px;
-    height: 81px;
+  .zone-opponents .card-slot {
+    width: 38px;
+    height: 53px;
+  }
+  .zone-board .card-slot,
+  .board-slot-empty {
+    width: 52px;
+    height: 73px;
+  }
+  .zone-my-hand .card-slot {
+    width: 72px;
+    height: 101px;
   }
   .outlet {
     padding: var(--space-3);
