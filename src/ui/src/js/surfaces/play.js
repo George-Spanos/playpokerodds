@@ -143,7 +143,7 @@ async function deal() {
   // state grammar: the committed guess becomes a ghost smudge for the last round
   const lastThumb = ui.rail.wrapper.querySelector('.rail-thumb');
   const wasLocked = lastThumb?.classList.contains('rail-thumb--locked') ?? false;
-  ui.rail.wrapper.querySelectorAll('.rail-truth, .chalk-circle, .rail-thumb--ghost').forEach((n) => n.remove());
+  ui.rail.wrapper.querySelectorAll('.rail-truth, .chalk-circle, .chalk-burst, .rail-thumb--ghost').forEach((n) => n.remove());
   ui.rail.unlock();
   ui.rail.wrapper.setAttribute('aria-disabled', 'false');
   if (lastThumb && wasLocked) {
@@ -296,18 +296,33 @@ function reveal(answer) {
   ui.rail.markTruth(answer.odds);
   const score = calculateGuessScore(state.estimate ?? answer.estimate, answer.odds);
 
-  // circle the gap between guess and truth on the rail
   const guessPct = state.estimate ?? answer.estimate;
   const truthPct = answer.odds;
-  const circle = el('div', {
-    class: 'chalk-circle',
-    style: `left:${Math.min(guessPct, truthPct)}%; width:${Math.max(4, Math.abs(truthPct - guessPct))}%; top:-14px; height:calc(100% + 28px)`,
-  });
-  ui.rail.wrapper.append(circle);
-
+  const gap = Math.abs(truthPct - guessPct);
   const accurate = scoreIsAccurate(score);
+
+  // The circled gap only reads when there IS a visible gap between the two
+  // marks. When the guess is nailed, the marks overlap: instead of a degenerate
+  // ring around one point, draw a chalk burst — a small radial emphasis
+  // centered on the marks — and lead the verdict with the win.
+  if (gap >= 2) {
+    const circle = el('div', {
+      class: 'chalk-circle',
+      style: `left:${Math.min(guessPct, truthPct)}%; width:${Math.max(4, gap)}%; top:-14px; height:calc(100% + 28px)`,
+    });
+    ui.rail.wrapper.append(circle);
+  } else {
+    const centerPct = (guessPct + truthPct) / 2;
+    const burst = el('div', {
+      class: 'chalk-burst',
+      style: `left:${centerPct}%`,
+      'aria-hidden': 'true',
+    });
+    ui.rail.wrapper.append(burst);
+  }
+
   ui.verdict.textContent = accurate
-    ? `Nailed it — off by ${score.toFixed(2)}`
+    ? `Nailed it — off by only ${score.toFixed(2)}`
     : `Off by ${score.toFixed(2)}`;
   ui.verdict.className = `verdict ${accurate ? 'verdict--good' : 'verdict--off'}`;
 
