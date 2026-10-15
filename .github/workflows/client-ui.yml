@@ -19,7 +19,7 @@ jobs:
 
       - name: Install deps
         working-directory: ./src/ui
-        run: npm ci
+        run: npm install
 
       - name: Unit tests
         working-directory: ./src/ui
@@ -28,7 +28,3 @@ jobs:
       - name: Build static bundle
         working-directory: ./src/ui
         run: npm run build
-
-      - name: Publish image
-        if: github.ref == 'refs/heads/main'
-        run: echo "image publication handled by the compose/publish pipeline"

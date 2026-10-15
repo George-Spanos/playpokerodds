@@ -20,6 +20,14 @@ jobs:
 
     steps:
       - uses: actions/checkout@v7
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      # the image copies dist/ from the build context; produce it before building
+      - name: Build static bundle
+        working-directory: ./src/ui
+        run: npm install && npm run build
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4

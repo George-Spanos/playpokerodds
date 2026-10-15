@@ -17,10 +17,30 @@ jobs:
       JWT_SECRET: SOMEJWTSECRET
     steps:
       - uses: actions/checkout@v7
+
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "src/web-api"
+
+      - name: Start Postgres
+        run: |
+          docker run -d --name ppo-test-db -p 5432:5432 \
+            -e POSTGRES_USER=root -e POSTGRES_PASSWORD=root -e POSTGRES_DB=gtop \
+            postgres:15.1
+          for i in $(seq 1 30); do
+            docker exec ppo-test-db pg_isready -d gtop -U root && break
+            sleep 1
+          done
+
       - name: Test api
         working-directory: ./src/web-api
-        run: |
-          npm run docker:test
+        env:
+          TEST_DATABASE_URL: postgres://root:root@localhost:5432/gtop
+          JWT_SECRET: SOMEJWTSECRET
+          CALC_ODDS_URL: http://localhost:7071/api/calcOdds
+        run: cargo test --release -- --test-threads=1
+
   build:
     runs-on: "ubuntu-latest"
     needs: test
@@ -45,3 +65,4 @@ jobs:
           push: true
           tags: ghcr.io/george-spanos/ppo-api:latest, ghcr.io/george-spanos/ppo-api:stable, ghcr.io/george-spanos/ppo-api:${{ github.sha }}
           context: ./src/web-api
+          file: ./src/web-api/Dockerfile.rust
