@@ -174,6 +174,7 @@ pub async fn login(
     _headers: HeaderMap,
     Json(payload): Json<serde_json::Value>,
 ) -> Result<axum::response::Response, (StatusCode, axum::response::Response)> {
+        #[allow(clippy::result_large_err)]
     let dto: AuthPayload = serde_json::from_value(payload)
         .map_err(|_| (StatusCode::UNAUTHORIZED, unauthorized("Invalid Credentials")))?;
     validate_auth_payload(&dto).map_err(|(status, msg)| (status, unauthorized(msg)))?;

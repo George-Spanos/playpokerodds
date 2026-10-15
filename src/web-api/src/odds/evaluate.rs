@@ -2,7 +2,7 @@
 //! Returns (category, tiebreaks[5]); comparison is lexicographic on the pair,
 //! which produces the same winner as the TS sorted-card comparison.
 
-use crate::cards::Card;
+use crate::odds::cards::Card;
 use std::collections::HashMap;
 
 pub const HIGH_CARD: u8 = 1;
@@ -89,7 +89,7 @@ pub fn evaluate(cards: &mut [Card]) -> BestHand {
         *suit_count.entry(c.suit).or_insert(0) += 1;
     }
     let mut flush_suit: u8 = 0;
-    for suit in crate::cards::SUITS {
+    for suit in crate::odds::cards::SUITS {
         if suit_count.get(&suit).copied().unwrap_or(0) >= 5 {
             flush_suit = suit;
             break;
@@ -288,7 +288,7 @@ fn tiebreaks_from(hand: &[Card]) -> [u8; 5] {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::cards::Card;
+    use crate::odds::cards::Card;
 
     fn parse(hand: &str) -> Vec<Card> {
         hand.split(',').map(Card::parse).collect::<Option<Vec<_>>>().unwrap()

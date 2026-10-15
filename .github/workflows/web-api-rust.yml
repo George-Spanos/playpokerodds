@@ -22,7 +22,8 @@ jobs:
       - name: Start Postgres
         working-directory: ./src/web-api
         run: |
-          docker run -d --name ppo-test-db -p 5432:5432 \
+          docker rm -f ppo-test-db > /dev/null 2>&1 || true
+          docker run -d --name ppo-test-db -p 5433:5432 \
             -e POSTGRES_USER=root -e POSTGRES_PASSWORD=root -e POSTGRES_DB=gtop \
             postgres:15.1
           for i in $(seq 1 30); do
@@ -30,25 +31,11 @@ jobs:
             sleep 1
           done
 
-      # the answer endpoints call the odds service over HTTP; serve it from the
-      # just-built Rust crate (no Deno image involved anymore)
-      - name: Build calc-odds service
-        working-directory: ./src/calc-odds-api
-        run: cargo build --release
-
-      - name: Start calc-odds service
-        run: |
-          docker build -t ppo-calc-local ./src/calc-odds-api
-          docker run -d --name ppo-calc -p 7071:7071 ppo-calc-local
-          sleep 2
-          curl -sf http://localhost:7071/liveness
-
       - name: Unit + integration tests
         working-directory: ./src/web-api
         env:
-          TEST_DATABASE_URL: postgres://root:root@localhost:5432/gtop
+          TEST_DATABASE_URL: postgres://root:root@localhost:5433/gtop
           JWT_SECRET: SOME_SECRET
-          CALC_ODDS_URL: http://localhost:7071/api/calcOdds
         run: cargo test --release -- --test-threads=1
 
       - name: Lints

@@ -5,7 +5,6 @@ use ppo_api::state::AppState;
 fn test_state(pool: sqlx::PgPool) -> AppState {
     AppState {
         db: pool,
-        http: reqwest::Client::new(),
     }
 }
 
@@ -37,7 +36,6 @@ async fn body_string(resp: axum::response::Response) -> serde_json::Value {
 
 async fn app_with_clean_db() -> (axum::Router, sqlx::PgPool) {
     std::env::set_var("JWT_SECRET", "SOME_SECRET");
-    std::env::set_var("CALC_ODDS_URL", "http://localhost:7071/api/calcOdds");
     let pool = db::init_pool(
         &std::env::var("TEST_DATABASE_URL")
             .unwrap_or_else(|_| "postgres://root:root@localhost:5432/gtop".into()),

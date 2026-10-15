@@ -15,7 +15,6 @@ async fn main() {
     let pool = db::init_pool(&database_url).await.expect("database init failed");
     let state = AppState {
         db: pool,
-        http: reqwest::Client::new(),
     };
     let app = routes::router(state);
     let listener = tokio::net::TcpListener::bind("0.0.0.0:3000")

@@ -3,8 +3,8 @@
 //! removal, exhaustive enumeration when exact, Monte Carlo with
 //! shuffle-before-compare tie handling.
 
-use crate::cards::{full_deck, Card};
-use crate::evaluate::{evaluate, BestHand};
+use crate::odds::cards::{full_deck, Card};
+use crate::odds::evaluate::{evaluate, BestHand};
 use rand::Rng;
 use std::collections::HashMap;
 
@@ -100,7 +100,7 @@ fn play(input: &Input, extra_board: Option<&[Card]>, rng: &mut impl Rng) -> Vec<
     }
 
     // buildKnownBoard: remove + fix known board cards
-    let board_cards = crate::cards::parse_card_group(&input.board).unwrap_or_default();
+    let board_cards = crate::odds::cards::parse_card_group(&input.board).unwrap_or_default();
     let mut board: Vec<Card> = board_cards.clone();
     for c in &board_cards {
         remove_card(&mut deck, *c);
@@ -109,7 +109,7 @@ fn play(input: &Input, extra_board: Option<&[Card]>, rng: &mut impl Rng) -> Vec<
     // dealKnownCards
     let mut players: Vec<Player> = vec![];
     for h in &input.hands {
-        let dealt = crate::cards::parse_card_group(h).unwrap_or_default();
+        let dealt = crate::odds::cards::parse_card_group(h).unwrap_or_default();
         for c in &dealt {
             remove_card(&mut deck, *c);
         }
@@ -215,12 +215,12 @@ pub fn simulate(input: &Input) -> Stats {
         // exhaustive: every ordered 1–2 card board completion (ordered pairs
         // double-count turn+river order — same as the TS engine; odds unchanged)
         let mut deck = full_deck();
-        let board_cards = crate::cards::parse_card_group(&input.board).unwrap_or_default();
+        let board_cards = crate::odds::cards::parse_card_group(&input.board).unwrap_or_default();
         for c in &board_cards {
             remove_card(&mut deck, *c);
         }
         for h in &input.hands {
-            let cards = crate::cards::parse_card_group(h).unwrap_or_default();
+            let cards = crate::odds::cards::parse_card_group(h).unwrap_or_default();
             for c in &cards {
                 remove_card(&mut deck, *c);
             }

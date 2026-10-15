@@ -27,23 +27,11 @@ services:
     environment:
       - DB_CONNECTION_STRING=postgresql://root:root@db:5432/gtop
       - JWT_SECRET=SOME_SECRET_JWT_STUFF
-      - CALC_ODDS_URL=http://calc-odds-api:7071/api/calcOdds
-      - CALC_ODDS_KEY=somekey
+      - ITERATIONS=50000
       - LEADERBOARD_MIN_GAMES=2
     depends_on:
       db:
         condition: service_healthy
-      calc-odds-api:
-        condition: service_started
-  calc-odds-api:
-    build:
-      context: calc-odds-api
-    environment:
-      - ITERATIONS=50000
-    ports:
-      - 7071:7071
-    depends_on:
-      - db
   db:
     image: postgres:16.3
     environment:

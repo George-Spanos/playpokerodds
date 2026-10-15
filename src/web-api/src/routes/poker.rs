@@ -18,7 +18,6 @@ use serde::Deserialize;
 use serde_json::{json, Value};
 use sqlx::Row;
 
-const CALC_ODDS_UNSET: &str = "3301: calc odds url not set";
 
 fn uuid_text() -> String {
     uuid::Uuid::new_v4().to_string()
@@ -144,24 +143,29 @@ pub async fn post_new_round_answer(
     headers: HeaderMap,
     body: Option<Json<NewAnswerDto>>,
 ) -> Result<Response, Response> {
-    let Json(dto) = body.ok_or_else(|| bad_request_body())?;
-    let round = dto.round.clone().ok_or_else(|| bad_request_body())?;
-    let estimate = dto.estimate.ok_or_else(|| bad_request_body())?;
+    let Json(dto) = body.ok_or_else(bad_request_body)?;
+    let round = dto.round.clone().ok_or_else(bad_request_body)?;
+    let estimate = dto.estimate.ok_or_else(bad_request_body)?;
     if !validate_round(&round) {
         return Err(bad_request_body());
     }
 
-    // calculateWinOdds
-    let calc_url = std::env::var("CALC_ODDS_URL").unwrap_or_default();
-    if calc_url.is_empty() {
-        return Err((
-            StatusCode::INTERNAL_SERVER_ERROR,
-            CALC_ODDS_UNSET,
-        )
-            .into_response());
-    }
-    let api_key = std::env::var("CALC_ODDS_KEY").unwrap_or_default();
-    let odds = call_calc_odds(&state, &calc_url, &api_key, &round).await?;
+    // calculateWinOdds — in-process engine (formerly the calc-odds-api service)
+    let iterations = odd_iterations();
+    let my_hand = round.my_hand.join(",");
+    let board = round.board.join(",");
+    let known_opponents: Vec<String> = round
+        .opponents_hands
+        .iter()
+        .map(|h| h.iter().map(|c| c.to_string()).collect::<Vec<_>>().join(","))
+        .collect();
+    let odds = crate::odds::calculate_odds(
+        &my_hand,
+        &known_opponents,
+        &board,
+        known_opponents.len() + 1,
+        iterations,
+    );
 
     let score = calculate_guess_score(estimate, odds);
 
@@ -223,9 +227,9 @@ pub async fn post_existing_round_answer(
     headers: HeaderMap,
     body: Option<Json<ExistingAnswerDto>>,
 ) -> Result<Response, Response> {
-    let Json(dto) = body.ok_or_else(|| bad_request_body())?;
-    let round_id = dto.roundId.ok_or_else(|| bad_request_body())?;
-    let estimate = dto.estimate.ok_or_else(|| bad_request_body())?;
+    let Json(dto) = body.ok_or_else(bad_request_body)?;
+    let round_id = dto.roundId.ok_or_else(bad_request_body)?;
+    let estimate = dto.estimate.ok_or_else(bad_request_body)?;
     if round_id.is_empty() {
         return Err(bad_request_body());
     }
@@ -387,8 +391,8 @@ pub async fn fetch_events(
             "SELECT \"id\", \"type\", \"payload\", \"timestamp\", COUNT(*) OVER() as \"total\" \
              FROM \"Events\" ORDER BY \"timestamp\" DESC LIMIT $1 OFFSET $2",
         )
-        .bind(page_size as i64)
-        .bind(offset as i64)
+        .bind(page_size)
+        .bind(offset)
         .fetch_all(&state.db)
         .await
         .map_err(|_| StatusCode::INTERNAL_SERVER_ERROR)?
@@ -397,8 +401,8 @@ pub async fn fetch_events(
             "SELECT \"id\", \"type\", \"payload\", \"timestamp\", COUNT(*) OVER() as \"total\" \
              FROM \"Events\" WHERE \"payload\"::text LIKE $3 ORDER BY \"timestamp\" DESC LIMIT $1 OFFSET $2",
         )
-        .bind(page_size as i64)
-        .bind(offset as i64)
+        .bind(page_size)
+        .bind(offset)
         .bind(pattern)
         .fetch_all(&state.db)
         .await
@@ -464,28 +468,15 @@ async fn update_running_score(state: &AppState, user_id: &str, score: f64) {
         .await;
 }
 
-async fn call_calc_odds(
-    state: &AppState,
-    url: &str,
-    api_key: &str,
-    round: &Round,
-) -> Result<f64, Response> {
-    let resp = state
-        .http
-        .post(url)
-        .header("x-api-key", api_key)
-        .json(&json!({ "round": round }))
-        .send()
-        .await;
-    match resp {
-        Ok(r) => {
-            let payload: Value = r.json().await.map_err(|_| bad_request_body())?;
-            match payload.get("odds").and_then(|o| o.as_f64()) {
-                Some(odds) => Ok(odds),
-                None => Err(bad_request_body()),
-            }
+/// ITERATIONS env with the same semantics the calc service had: invalid or
+/// missing → 50,000 with a console warning.
+fn odd_iterations() -> usize {
+    match std::env::var("ITERATIONS").map(|v| v.parse::<usize>()) {
+        Ok(Ok(n)) if n > 0 => n,
+        _ => {
+            eprintln!("iterations invalid value. Will use default value: 50_000");
+            50_000
         }
-        Err(_) => Err(bad_request_body()),
     }
 }
 

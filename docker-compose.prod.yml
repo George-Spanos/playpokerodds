@@ -10,17 +10,6 @@ services:
     depends_on:
       - web-api
 
-  migrate:
-    build:
-      context: src/web-api
-      target: build
-    command: ["npx", "prisma", "migrate", "deploy"]
-    env_file:
-      - src/web-api/.env
-    depends_on:
-      db:
-        condition: service_healthy
-
   web-api:
     restart: always
     image: ghcr.io/george-spanos/ppo-api:stable
@@ -32,21 +21,8 @@ services:
     env_file:
       - src/web-api/.env
     depends_on:
-      migrate:
-        condition: service_completed_successfully
-      calc-odds-api:
-        condition: service_started
-  calc-odds-api:
-    restart: always
-    image: ghcr.io/george-spanos/ppo-calc-odds:stable
-    labels:
-      com.centurylinklabs.watchtower.enable: "true"
-    env_file: src/calc-odds-api/.env
-    ports:
-      - "127.0.0.1:43003:7071"
-      - "[::1]:43003:7071"
-    depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     restart: always

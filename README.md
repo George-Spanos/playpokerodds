@@ -7,8 +7,7 @@ This is the repository for every service that relates to https://playpokerodds.c
 Code of this repo is found inside the `src` folder. This folder includes the following services:
 
 - UI folder - Vanilla JS front end of the app (ES modules + CSS, no framework)
-- web-api folder - The web api of the app, written in Rust (axum + sqlx)
-- calc-odds-api - Contains the `calculateWinningOdds` operation which is the most critical operation **and the most cpu expensive**. This is why it's deployed seperately, even if it's a single endpoint. Written in Rust (axum), like the web-api.
+- web-api folder - The web api of the app, written in Rust (axum + sqlx). Includes the Monte Carlo odds engine (`src/odds/`) — the most CPU-expensive operation runs in-process.
 # How To Run
 
 - Make sure you have [docker installed](https://docs.docker.com/desktop/)
@@ -16,8 +15,8 @@ Code of this repo is found inside the `src` folder. This folder includes the fol
 
 # Container images
 
-Each service publishes to GHCR under `ghcr.io/george-spanos/*` (`ppo-ui`, `ppo-api`,
-`ppo-calc-odds`) from the workflows in `.github/workflows`. They authenticate with the
+Each service publishes to GHCR under `ghcr.io/george-spanos/*` (`ppo-ui`, `ppo-api`)
+from the workflows in `.github/workflows`. They authenticate with the
 built-in `GITHUB_TOKEN`, so **this repo needs no registry secrets** - a fork or a
 transfer keeps working with nothing to re-provision. The namespace is written out in
 full rather than derived from `github.repository_owner`, because GHCR rejects
@@ -29,10 +28,11 @@ uppercase in image references and the owner is `George-Spanos`.
 
 The poker odds engine originally lived in `src/core` (TypeScript for Deno) and
 was consumed via a vendored npm package. Every consumer has since been ported:
-the web-api (Rust) and calc-odds-api (Rust) carry native implementations, and
-the UI re-implements its client-side subset in JS. The crate was removed; see
-git history for the original engine, and `src/calc-odds-api/src/evaluate.rs`
-for the authoritative Rust port.
+the web-api carries the authoritative Rust port (`src/web-api/src/odds/` —
+hand evaluator + Monte Carlo simulation), and the UI re-implements its
+client-side subset in JS. The former standalone calc-odds service was folded
+into the web-api as an in-process call. See git history for the original
+engine.
 
 # Working on the Rust web-api
 

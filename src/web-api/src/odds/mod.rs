@@ -1,10 +1,13 @@
+//! Monte Carlo odds engine, ported from the original Deno core engine
+//! (itself replaced by this Rust implementation).
+
 pub mod cards;
 pub mod evaluate;
 pub mod simulate;
 
-/// calculateOdds port: transformRoundToInput + Calculator + winPercent extraction.
-/// Unknown opponent hands ('..,..') are filtered out and replaced by NPC players,
-/// matching transformRoundToInput.
+/// calculateOdds: transformRoundToInput + Calculator + winPercent extraction.
+/// Unknown opponent hands ('..,..') are filtered out and replaced by NPC
+/// players, matching transformRoundToInput.
 pub fn calculate_odds(
     my_hand: &str,
     opponents_known_hands: &[String],

@@ -165,7 +165,7 @@ pub async fn fetch_by_username(
             (timestamp, entry)
         })
         .collect();
-    history.sort_by(|a, b| b.0.cmp(&a.0));
+    history.sort_by_key(|(ts, _)| std::cmp::Reverse(*ts));
 
     let favorite_rows = sqlx::query(
         "SELECT DISTINCT R.\"id\" FROM \"Rounds\" R \

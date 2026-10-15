@@ -140,7 +140,7 @@ fn range_ts(start: usize, end: isize) -> Vec<usize> {
     if diff == 0 {
         return vec![start];
     }
-    (0..=(diff.abs() as usize))
+    (0..=diff.unsigned_abs())
         .map(|x| {
             let increment = if end > start as isize { x as isize } else { -(x as isize) };
             (start as isize + increment) as usize

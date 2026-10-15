@@ -12,10 +12,8 @@ pub async fn readiness(State(state): State<AppState>) -> StatusCode {
         .execute(&state.db)
         .await
         .is_ok();
-    let calc_ok = std::env::var("CALC_ODDS_URL")
-        .map(|u| !u.is_empty())
-        .unwrap_or(false);
-    if count_ok && calc_ok {
+    // the odds engine is in-process now; readiness is db availability
+    if count_ok {
         StatusCode::OK
     } else {
         StatusCode::INTERNAL_SERVER_ERROR

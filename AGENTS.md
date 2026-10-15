@@ -3,8 +3,7 @@
 ## Project Structure & Module Organization
 This is a polyglot monorepo for Play Poker Odds:
 - `src/ui` — Vanilla JS client (ES modules + CSS, no framework) and static card/UI assets. Entry: `index.html`; app code in `src/js/`; styles in `src/styles/`.
-- `src/web-api` — Rust API (axum + sqlx). Domain logic in `src/domain`, routes in `src/routes`, SQL migrations in `migrations/`, integration tests in `tests/integration.rs`.
-- `src/calc-odds-api` — Rust odds-calculation service (axum). Hand evaluator in `src/evaluate.rs`, Monte Carlo engine in `src/simulate.rs`; the port of the original Deno engine.
+- `src/web-api` — Rust API (axum + sqlx) with the in-process Monte Carlo odds engine (`src/odds/`: hand evaluator in `evaluate.rs`, simulation in `simulate.rs`). Routes in `src/routes`, SQL migrations in `migrations/`, integration tests in `tests/integration.rs`.
 - `.github/workflows` — Service build/test/publish pipelines.
 - `openspec` — Specification changes and archived specs.
 
@@ -16,7 +15,6 @@ Use repository-root Docker commands unless working in one service:
 - `cd src/web-api && cargo test` — Unit + integration tests (integration needs a Postgres; see `tests/integration.rs` header).
 - `cd src/ui && npm run dev` — Serve the client on :4200 (SPA fallback dev server).
 - `cd src/ui && npm test` — Vitest unit tests for client domain logic.
-- `cd src/calc-odds-api && cargo run` — Run the odds service locally (reads `PORT`, `ITERATIONS`, `APIKEY`).
 
 ## Coding Style & Naming Conventions
 Two-space indentation, UTF-8, single quotes for TypeScript, final newline. Rust: standard `cargo fmt` style, modules mirror the old route tree (`routes/auth.rs`, `routes/poker.rs`, `routes/user.rs`, `routes/health.rs`). Vanilla JS: ES modules, one surface per file under `src/js/surfaces/`, pure logic in `src/js/domain/`, DOM helpers in `src/js/components/`. The client design system is chalk-on-slate; tokens live in `src/styles/tokens.css` and shared chalk material in `chalk.css` — do not inline colors.
