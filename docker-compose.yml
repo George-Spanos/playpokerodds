@@ -37,8 +37,7 @@ services:
         condition: service_started
   calc-odds-api:
     build:
-      context: src
-      dockerfile: calc-odds-api/Dockerfile
+      context: calc-odds-api
     environment:
       - ITERATIONS=50000
     ports:

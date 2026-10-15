@@ -1,6 +1,0 @@
-{
-  "tasks": {
-    "test": "deno test src/",
-    "build:npm": "deno run -A scripts/build_npm.ts"
-  }
-}

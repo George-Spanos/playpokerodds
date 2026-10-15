@@ -1,0 +1,32 @@
+name: Calc odds API - Rust build and test
+
+on:
+  push:
+    branches:
+      - "main"
+    paths:
+      - "src/calc-odds-api/**"
+  workflow_dispatch:
+
+jobs:
+  calc:
+    runs-on: "ubuntu-latest"
+    steps:
+      - uses: actions/checkout@v7
+      - uses: dtolnay/rust-toolchain@stable
+
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "src/calc-odds-api"
+
+      - name: Unit + parity tests
+        working-directory: ./src/calc-odds-api
+        run: cargo test --release
+
+      - name: Lints
+        working-directory: ./src/calc-odds-api
+        run: cargo clippy -- -D warnings
+
+      - name: Release build
+        working-directory: ./src/calc-odds-api
+        run: cargo build --release

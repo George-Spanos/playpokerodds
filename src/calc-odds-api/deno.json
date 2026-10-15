@@ -1,9 +1,0 @@
-{
-  "tasks": {
-    "dev": "deno run --watch -A main.ts",
-    "debug": "deno run --watch --inspect-brk -A main.ts"
-  },
-  "imports": {
-    "@poker-core/": "../core/src/"
-  }
-}
