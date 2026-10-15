@@ -7,7 +7,7 @@ export function render(outlet) {
     el(
       'div',
       { class: 'panel', style: 'padding:var(--space-5); max-width:720px; margin:0 auto' },
-      el('div', { class: 'chalk-heading', style: 'font-size:2.25rem', text: 'Forget about bets. Focus on winning chances.' }),
+      el('h2', { class: 'chalk-heading', style: 'font-size:2.25rem; margin:0 0 var(--space-3)', text: 'Forget about bets. Focus on winning chances.' }),
       el(
         'p',
         { style: 'font-size:var(--text-lg); line-height:1.6; color:var(--ink-soft)' },

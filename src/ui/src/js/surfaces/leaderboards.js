@@ -6,7 +6,7 @@ import { el } from '../components/dom.js';
 export function render(outlet) {
   const tableWrap = el('div', { class: 'panel', style: 'padding:var(--space-4)' });
   outlet.append(
-    el('div', { class: 'chalk-heading', style: 'font-size:2rem; margin-bottom:var(--space-4)', text: 'Leaderboards' }),
+    el('h2', { class: 'chalk-heading', style: 'font-size:2rem; margin:0 0 var(--space-4)', text: 'Leaderboards' }),
     tableWrap
   );
   fetchLeaderboards().then(({ status, body }) => {

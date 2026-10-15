@@ -8,6 +8,7 @@ import {
 } from '../api.js';
 import { getState, subscribe } from '../auth.js';
 import { el, cardSlot, handRow } from '../components/dom.js';
+import { accuracyChart } from '../components/accuracyChart.js';
 
 export function render(outlet, params = {}) {
   const auth = getState();
@@ -47,7 +48,7 @@ function renderSignin(outlet) {
         else error.textContent = 'Check your details and try again.';
       },
     },
-    el('div', { class: 'chalk-heading', style: 'font-size:1.75rem', text: 'Sign in to keep score' }),
+    el('h2', { class: 'chalk-heading', style: 'font-size:1.75rem; margin:0', text: 'Sign in to keep score' }),
     emailRow,
     el('label', {}, el('span', { class: 'chalk-label', text: 'Username' }), username),
     el('label', {}, el('span', { class: 'chalk-label', text: 'Password' }), password),
@@ -83,7 +84,7 @@ function renderProfile(outlet, username, isOwner) {
     const header = el(
       'div',
       { class: 'panel', style: 'padding:var(--space-4); display:flex; gap:var(--space-5); align-items:baseline; flex-wrap:wrap' },
-      el('div', { class: 'chalk-heading', style: 'font-size:2rem', text: username }),
+      el('h2', { class: 'chalk-heading', style: 'font-size:2rem; margin:0', text: username }),
       el('div', { class: 'chalk-label', text: `rank ${rank}` }),
       el('div', { class: 'chalk-label', text: `score ${Number(body.score).toFixed(2)}` })
     );
@@ -94,7 +95,7 @@ function renderProfile(outlet, username, isOwner) {
       const favBtn = isOwner
         ? el('button', {
             class: 'chalk-btn',
-            text: favorite ? '★' : '☆',
+            text: '',
             'aria-label': favorite ? 'Remove from favorites' : 'Add to favorites',
             onclick: async () => {
               const res = favorite
@@ -106,6 +107,9 @@ function renderProfile(outlet, username, isOwner) {
             },
           })
         : null;
+      if (favBtn) {
+        favBtn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="${favorite ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8L3.5 9.7l5.9-.8z"/></svg>`;
+      }
       historyList.append(
         el(
           'div',
@@ -120,14 +124,23 @@ function renderProfile(outlet, username, isOwner) {
       historyList.append(el('div', { class: 'chalk-label', text: 'No rounds yet.' }));
     }
 
-    outlet.append(header, el('div', { class: 'chalk-heading', style: 'font-size:1.5rem; margin:var(--space-4) 0 var(--space-2)', text: 'Round history' }), historyList);
+    outlet.append(header);
+
+    if (isOwner && (body.rounds ?? []).length > 0) {
+      outlet.append(
+        el('h3', { class: 'chalk-heading', style: 'font-size:1.25rem; margin:var(--space-4) 0 var(--space-2)', text: 'Accuracy by round — lower is closer' }),
+        (() => { const wrap = el('div', { class: 'panel', style: 'padding:var(--space-3)' }); wrap.append(accuracyChart(body.rounds)); return wrap; })()
+      );
+    }
+
+    outlet.append(el('h3', { class: 'chalk-heading', style: 'font-size:1.5rem; margin:var(--space-4) 0 var(--space-2)', text: 'Round history' }), historyList);
 
     if (isOwner) outlet.append(buildSettingsForm());
   });
 }
 
 function buildSettingsForm() {
-  const heading = el('div', { class: 'chalk-heading', style: 'font-size:1.5rem; margin:var(--space-5) 0 var(--space-2)', text: 'Settings' });
+  const heading = el('h3', { class: 'chalk-heading', style: 'font-size:1.5rem; margin:var(--space-5) 0 var(--space-2)', text: 'Settings' });
   const username = el('input', { type: 'text', autocomplete: 'username' });
   const email = el('input', { type: 'email', autocomplete: 'email' });
   const password = el('input', { type: 'password', autocomplete: 'new-password', placeholder: 'leave empty to keep' });

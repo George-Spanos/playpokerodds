@@ -57,7 +57,7 @@ function buildGuessPanel() {
   ui.guessPanel = el(
     'div',
     { class: 'panel guess-panel' },
-    el('div', { class: 'chalk-heading', style: 'font-size:1.5rem', text: 'Your guess' }),
+    el('h3', { class: 'chalk-heading', style: 'font-size:1.5rem; margin:0', text: 'Your guess' }),
     ui.guessValue,
     ui.rail.wrapper,
     ui.revealRow,
@@ -77,7 +77,11 @@ function buildRail() {
         style: `left:${i}%`,
       })
     );
+    if (i % 50 === 0) {
+      wrapper.append(el('span', { class: 'rail-numeral', style: `left:${i}%`, text: String(i) }));
+    }
   }
+  wrapper.append(el('span', { class: 'rail-numeral', style: 'left:100%', text: '100' }));
   const thumb = el('div', { class: 'rail-thumb', style: 'left:50%' });
   wrapper.append(thumb);
 
@@ -134,8 +138,16 @@ async function deal() {
   state.estimate = null;
   state.answer = null;
   renderTable(null);
+  // state grammar: the committed guess becomes a ghost smudge for the last round
+  const lastThumb = ui.rail.wrapper.querySelector('.rail-thumb');
+  const wasLocked = lastThumb?.classList.contains('rail-thumb--locked') ?? false;
+  ui.rail.wrapper.querySelectorAll('.rail-truth, .chalk-circle, .rail-thumb--ghost').forEach((n) => n.remove());
   ui.rail.unlock();
   ui.rail.wrapper.setAttribute('aria-disabled', 'false');
+  if (lastThumb && wasLocked) {
+    const ghost = el('div', { class: 'rail-thumb rail-thumb--ghost chalk-ghost', style: `left:${lastThumb.style.left}` });
+    ui.rail.wrapper.append(ghost);
+  }
   ui.guessValue.innerHTML = '';
   ui.guessValue.append(document.createTextNode('50'), el('span', { class: 'unit', text: ' %' }));
   ui.verdict.className = 'verdict';
@@ -267,14 +279,21 @@ function reveal(answer) {
 
   ui.revealRow.innerHTML = '';
 
+  const starSvg = (filled) => `<svg width="16" height="16" viewBox="0 0 24 24" fill="${filled ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M12 3.5l2.6 5.4 5.9.8-4.3 4.1 1 5.8-5.2-2.8-5.2 2.8 1-5.8L3.5 9.7l5.9-.8z"/></svg>`;
   const favBtn = el('button', {
     class: 'chalk-btn',
-    text: '☆ Favorite',
+    text: ' Favorite',
+    'aria-label': 'Add to favorites',
     onclick: async () => {
       const res = await addToFavorites(answer.roundId);
-      favBtn.textContent = res.status === 204 || res.status === 304 ? '★ Favorited' : 'Sign in to keep favorites';
+      if (res.status === 204 || res.status === 304) {
+        favBtn.innerHTML = starSvg(true) + ' Favorited';
+      } else {
+        favBtn.textContent = 'Sign in to keep favorites';
+      }
     },
   });
+  favBtn.innerHTML = starSvg(false) + favBtn.textContent;
   const shareBtn = el('button', {
     class: 'chalk-btn',
     text: 'Share round',

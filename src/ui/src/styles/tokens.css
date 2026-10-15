@@ -1,3 +1,17 @@
+/* Self-hosted chalk lettering (world voice survives offline) */
+@font-face {
+  font-family: "Caveat";
+  src: url("../assets/fonts/caveat.woff2") format("woff2");
+  font-weight: 600 700;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Patrick Hand";
+  src: url("../assets/fonts/patrickhand.woff2") format("woff2");
+  font-weight: 400;
+  font-display: swap;
+}
+
 /* Play Poker Odds! — chalkboard odds-sheet design tokens.
    World: cardroom back-office chalkboard (see .impeccable/surfaces/src-ui.md).
    Slate ground, chalk-white line work, amber-ochre accent. Cards are the only
@@ -40,9 +54,9 @@
   --line-heavy: 3px;
 
   /* type */
-  --font-display: "Caveat", "Segoe Print", "Comic Sans MS", cursive;
-  --font-chalk: "Patrick Hand", "Segoe Print", "Comic Sans MS", cursive;
-  --font-numbers: "Patrick Hand", "Segoe Print", monospace;
+  --font-display: "Caveat", cursive;
+  --font-chalk: "Patrick Hand", cursive;
+  --font-numbers: "Patrick Hand", monospace;
 
   --text-xs: 0.75rem;
   --text-sm: 0.875rem;

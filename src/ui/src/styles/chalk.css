@@ -125,6 +125,14 @@
   height: 20px;
   background: var(--chalk-300);
 }
+.rail-numeral {
+  position: absolute;
+  top: calc(50% + 16px);
+  transform: translateX(-50%) rotate(-1deg);
+  font-family: var(--font-numbers);
+  font-size: var(--text-sm);
+  color: var(--ink-faint);
+}
 .rail-thumb {
   position: absolute;
   top: 50%;
@@ -137,6 +145,11 @@
 }
 .rail-thumb--locked {
   background: var(--chalk-100);
+}
+.rail-thumb--ghost {
+  background: var(--chalk-400);
+  filter: blur(1px);
+  opacity: 0.4;
 }
 .rail-truth {
   position: absolute;

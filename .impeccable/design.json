@@ -1,0 +1,56 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-15T23:10:00Z",
+  "title": "Design System: Play Poker Odds!",
+  "extensions": {
+    "colorMeta": {
+      "chalk-100": { "role": "primary", "displayName": "Chalk White", "canonical": "#f2f5ef", "tonalRamp": ["#f2f5ef", "#e4e9e0", "#cfd6ca", "#aeb8a8", "#8b968a", "#6b766b"] },
+      "amber-400": { "role": "secondary", "displayName": "Amber Ochre", "canonical": "#d9a94e", "tonalRamp": ["#e8c882", "#d9a94e", "#c08a3e"] },
+      "slate-900": { "role": "neutral", "displayName": "Cardroom Slate", "canonical": "#141c17", "tonalRamp": ["#101613", "#141c17", "#18221b", "#1d2a21", "#26362b"] },
+      "clay-400": { "role": "error", "displayName": "Clay", "canonical": "#d98d6a" }
+    },
+    "typographyMeta": {
+      "display": { "displayName": "Caveat", "purpose": "Hand-lettered chalk headings and the brand." },
+      "body": { "displayName": "Patrick Hand", "purpose": "All copy, buttons, numerals." }
+    },
+    "shadows": [
+      { "name": "panel-lift", "value": "0 2px 6px rgba(0,0,0,0.35)", "purpose": "Ambient lift for drawn panels." },
+      { "name": "card-pasteboard", "value": "0 3px 10px rgba(0,0,0,0.45)", "purpose": "Physical card faces sitting on the slate." }
+    ],
+    "motion": [
+      { "name": "chalk-draw", "value": "cubic-bezier(0.16, 1, 0.3, 1)", "purpose": "Strokes decelerate smoothly; no overshoot." }
+    ],
+    "breakpoints": [
+      { "name": "mobile", "value": "900px" }
+    ]
+  },
+  "components": [
+    {
+      "name": "Chalk Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "Chalk-stroke button; primary variant is amber-armed.",
+      "html": "<button class=\"chalk-btn chalk-btn--primary\">Reveal</button>",
+      "css": ".chalk-btn { font-family: 'Patrick Hand', cursive; font-size: 1.25rem; color: #f2f5ef; background: transparent; border: 2px solid #e4e9e0; border-radius: 6px; padding: 0.5rem 1.5rem; cursor: pointer; } .chalk-btn--primary { border: 3px solid #d9a94e; color: #e8c882; } .chalk-btn:active { background: #f2f5ef; color: #141c17; }"
+    },
+    {
+      "name": "Drawn Panel",
+      "kind": "card",
+      "refersTo": "panel",
+      "description": "Double-line chalk frame with corner ticks; never a filled card.",
+      "html": "<div class=\"panel\">content</div>",
+      "css": ".panel { position: relative; background: #18221b; border: 2px solid #cfd6ca; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.35), inset 0 0 0 4px #18221b, inset 0 0 0 5px rgba(242,245,239,0.28); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The cardroom back-office chalkboard",
+    "overview": "The interface is the scorer's pad every home game actually keeps: a green-black slate behind the counter, chalk line work, real pasteboard cards dealt on top as the only full-color objects. Nothing is a casino and nothing is a dashboard; the numbers are chalked, not streamed. Panels are drawn, not filled.",
+    "keyCharacteristics": ["Slate ground, chalk line work, single warm accent", "Drawn panels with corner ticks, never filled cards", "Real card faces as the only full-color objects", "Hand-lettered display over hand-printed body"],
+    "rules": [
+      { "name": "The Pasteboard Monopoly Rule", "body": "Full color belongs to card faces alone; UI chrome is chalk on slate.", "section": "colors" },
+      { "name": "The Hand-Only Rule", "body": "No system fonts; a glyph rendering in a platform font is a bug.", "section": "typography" }
+    ],
+    "dos": ["Use chalk grammar for state: solid committed / dashed pending / ghost last round", "Draw icons as inline SVG in chalk stroke", "Theme browser surfaces from the palette"],
+    "donts": ["No casino iconography: felt, gold trim, suite decorations, dice", "No Unicode glyphs as icons", "No filled/gradient panels", "No bounce or overshoot easing"]
+  }
+}
