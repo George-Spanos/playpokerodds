@@ -7,6 +7,7 @@ pub mod user;
 use crate::state::AppState;
 use axum::routing::{get, post, put};
 use axum::Router;
+use tower_http::cors::{Any, CorsLayer};
 
 pub fn router(state: AppState) -> Router {
     let auth_routes = Router::new()
@@ -46,5 +47,11 @@ pub fn router(state: AppState) -> Router {
         .nest("/poker", poker_routes)
         .nest("/user", user_routes)
         .nest("/health", health_routes)
+        .layer(
+            CorsLayer::new()
+                .allow_origin(Any)
+                .allow_methods(Any)
+                .allow_headers(Any),
+        )
         .with_state(state)
 }

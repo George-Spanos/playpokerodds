@@ -1,0 +1,70 @@
+/* Play Poker Odds! — chalkboard odds-sheet design tokens.
+   World: cardroom back-office chalkboard (see .impeccable/surfaces/src-ui.md).
+   Slate ground, chalk-white line work, amber-ochre accent. Cards are the only
+   full-color objects. */
+
+:root {
+  /* ground */
+  --slate-950: #101613;
+  --slate-900: #141c17;
+  --slate-850: #18221b;
+  --slate-800: #1d2a21;
+  --slate-700: #26362b;
+
+  /* chalk */
+  --chalk-100: #f2f5ef;
+  --chalk-200: #e4e9e0;
+  --chalk-300: #cfd6ca;
+  --chalk-400: #aeb8a8;
+  --chalk-500: #8b968a;
+  --chalk-600: #6b766b;
+
+  /* amber ochre accent (armed/warning chalk) */
+  --amber-300: #e8c882;
+  --amber-400: #d9a94e;
+  --amber-500: #c08a3e;
+
+  /* danger chalk (rare, errors only) */
+  --clay-400: #d98d6a;
+
+  /* semantic */
+  --ground: var(--slate-900);
+  --panel: var(--slate-850);
+  --ink: var(--chalk-100);
+  --ink-soft: var(--chalk-400);
+  --ink-faint: var(--chalk-600);
+  --accent: var(--amber-400);
+
+  /* chalk line widths */
+  --line: 2px;
+  --line-heavy: 3px;
+
+  /* type */
+  --font-display: "Caveat", "Segoe Print", "Comic Sans MS", cursive;
+  --font-chalk: "Patrick Hand", "Segoe Print", "Comic Sans MS", cursive;
+  --font-numbers: "Patrick Hand", "Segoe Print", monospace;
+
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-md: 1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+  --text-2xl: 2rem;
+  --text-4xl: 3.25rem;
+
+  /* spacing scale */
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 1rem;
+  --space-4: 1.5rem;
+  --space-5: 2.5rem;
+  --space-6: 4rem;
+
+  /* radii: chalk panels are near-square, cards keep pasteboard radius */
+  --radius-panel: 6px;
+  --radius-card: 8px;
+
+  --focus-ring: 0 0 0 3px rgba(217, 169, 78, 0.45);
+
+  --nav-height: 3.5rem;
+}

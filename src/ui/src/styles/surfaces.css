@@ -1,0 +1,222 @@
+/* Surface layouts: play, leaderboards, auth, profile, about. */
+
+* {
+  box-sizing: border-box;
+}
+html,
+body {
+  margin: 0;
+  min-height: 100vh;
+}
+body {
+  background:
+    radial-gradient(ellipse 120% 90% at 30% 10%, rgba(38, 54, 43, 0.5), transparent 60%),
+    var(--ground);
+  color: var(--ink);
+  font-family: var(--font-chalk);
+  font-size: var(--text-md);
+}
+
+.top-bar {
+  border-bottom: var(--line) solid rgba(207, 214, 202, 0.35);
+  padding: 0 var(--space-4);
+  background: rgba(16, 22, 19, 0.6);
+}
+.top-bar .chalk-nav {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.brand {
+  font-family: var(--font-display) !important;
+  font-size: var(--text-xl) !important;
+  color: var(--ink) !important;
+  margin-right: var(--space-4);
+}
+.user-status {
+  margin-left: auto;
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+}
+.user-status a {
+  color: var(--amber-300);
+  text-decoration: none;
+}
+
+.outlet {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+
+/* ---- play surface ---- */
+.play-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(300px, 1fr);
+  gap: var(--space-4);
+  min-height: calc(100vh - var(--nav-height) - 3 * var(--space-4));
+}
+.table-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+}
+.table-zone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-5);
+}
+.hand-row {
+  display: flex;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.hand-row__label {
+  min-width: 9rem;
+}
+.hand-cards {
+  display: flex;
+  gap: var(--space-2);
+}
+.board-cards {
+  display: flex;
+  gap: var(--space-2);
+  min-height: 100px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.deal-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+}
+
+.guess-panel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+  padding: var(--space-4);
+  align-self: start;
+  position: sticky;
+  top: var(--space-4);
+}
+.guess-value {
+  font-family: var(--font-numbers);
+  font-size: var(--text-4xl);
+  color: var(--ink);
+  text-align: center;
+  min-height: 4rem;
+}
+.guess-value .unit {
+  font-size: var(--text-xl);
+  color: var(--ink-faint);
+}
+.reveal-row {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+.verdict {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  text-align: center;
+  min-height: 2.4rem;
+}
+.verdict--good {
+  color: var(--chalk-200);
+}
+.verdict--off {
+  color: var(--amber-300);
+}
+
+/* ---- generic list/table surfaces ---- */
+.chalk-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-lg);
+}
+.chalk-table th {
+  font-family: var(--font-display);
+  font-weight: 600;
+  text-align: left;
+  color: var(--ink-soft);
+  border-bottom: var(--line) solid var(--chalk-400);
+  padding: var(--space-2);
+}
+.chalk-table td {
+  padding: var(--space-2);
+  border-bottom: 1px dashed var(--chalk-600);
+}
+.chalk-table td.num,
+.chalk-table th.num {
+  text-align: right;
+  font-family: var(--font-numbers);
+}
+
+/* ---- forms ---- */
+.chalk-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  max-width: 420px;
+  margin: 0 auto;
+  padding: var(--space-5);
+}
+.chalk-form label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+.chalk-form input {
+  background: var(--slate-800);
+  border: var(--line) solid var(--chalk-500);
+  border-radius: var(--radius-panel);
+  color: var(--ink);
+  font-family: var(--font-chalk);
+  font-size: var(--text-lg);
+  padding: var(--space-2);
+}
+.chalk-form input:focus {
+  border-color: var(--accent);
+}
+.form-error {
+  color: var(--clay-400);
+  min-height: 1.4em;
+}
+
+/* ---- history cards ---- */
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+.history-item {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  padding: var(--space-3);
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+/* ---- responsive: mobile is first-class ---- */
+@media (max-width: 900px) {
+  .play-grid {
+    grid-template-columns: 1fr;
+  }
+  .guess-panel {
+    position: static;
+  }
+  .card-slot {
+    width: 58px;
+    height: 81px;
+  }
+  .outlet {
+    padding: var(--space-3);
+  }
+}

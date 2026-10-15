@@ -1,9 +1,0 @@
-@if (header() && body()) {
-  <div class="round-result">
-    <span class="body-{{ headerClass }} header">{{ header() }}</span>
-    <span class="body body-{{ bodyClass }}" [ngClass]="classes()">
-      {{ body() }}
-    </span>
-    <ng-content select="[actions]"></ng-content>
-  </div>
-}

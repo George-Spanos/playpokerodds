@@ -259,6 +259,13 @@ async fn post_new_round_answer_full_pipeline() {
         .await
         .unwrap();
     assert_eq!(rounds, 1);
+    // myHand column stores the 2-card array, not the whole round object
+    let my_hand: serde_json::Value =
+        sqlx::query_scalar("SELECT \"myHand\" FROM \"Rounds\" LIMIT 1")
+            .fetch_one(&pool)
+            .await
+            .unwrap();
+    assert_eq!(my_hand, serde_json::json!(["5d", "Jh"]));
     let answers: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM \"RoundAnswers\"")
         .fetch_one(&pool)
         .await

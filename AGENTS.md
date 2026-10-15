@@ -2,10 +2,10 @@
 
 ## Project Structure & Module Organization
 This is a polyglot monorepo for Play Poker Odds:
-- `src/ui` — Angular 17 client and static card/UI assets.
-- `src/web-api` — Express TypeScript API, Prisma schema/migrations, and Jest tests.
-- `src/core` — Deno poker domain logic.
-- `src/calc-odds-api` — Dedicated Deno odds-calculation service.
+- `src/ui` — Vanilla JS client (ES modules + CSS, no framework) and static card/UI assets. Entry: `index.html`; app code in `src/js/`; styles in `src/styles/`.
+- `src/web-api` — Rust API (axum + sqlx). Domain logic in `src/domain`, routes in `src/routes`, SQL migrations in `migrations/`, integration tests in `tests/integration.rs`.
+- `src/core` — TypeScript poker domain logic (Deno). Vendored into npm consumers.
+- `src/calc-odds-api` — Deno odds-calculation service (oak).
 - `.github/workflows` — Service build/test/publish pipelines.
 - `openspec` — Specification changes and archived specs.
 
@@ -13,20 +13,20 @@ This is a polyglot monorepo for Play Poker Odds:
 Use repository-root Docker commands unless working in one service:
 - `./run.sh` — Build and start the full local stack.
 - `docker compose down` — Stop local services.
-- `cd src/web-api && npm run dev` — Run the API locally.
-- `cd src/ui && npm run dev` — Run the Angular client locally.
+- `cd src/web-api && cargo run` — Run the Rust API locally (needs `DB_CONNECTION_STRING`, `JWT_SECRET`, `CALC_ODDS_URL` env; copy `.env.example`).
+- `cd src/web-api && cargo test` — Unit + integration tests (integration needs a Postgres; see `tests/integration.rs` header).
+- `cd src/ui && npm run dev` — Serve the client on :4200 (SPA fallback dev server).
+- `cd src/ui && npm test` — Vitest unit tests for client domain logic.
 - `cd src/calc-odds-api && deno task dev` — Run the odds service locally.
 
-From `src/web-api`, use `npm run build`, `npm run lint`, and `npm test` or `npm run docker:test`. From `src/ui`, use `npm run build` and `npm test`. From `src/core`, use `deno task test` and, after source changes, `deno task build:npm`; commit regenerated `vendor/poker-core` folders.
-
 ## Coding Style & Naming Conventions
-Use two-space indentation, UTF-8, single quotes for TypeScript, and a final newline. The web API uses ESLint plus Prettier (`npm run lint:fix`). Keep Angular filenames such as `leaderboards.component.ts` and route/store/service names consistent with existing feature folders. For Deno, prefer idiomatic ESM and the existing `@poker-core/` import mapping.
+Two-space indentation, UTF-8, single quotes for TypeScript, final newline. Rust: standard `cargo fmt` style, modules mirror the old route tree (`routes/auth.rs`, `routes/poker.rs`, `routes/user.rs`, `routes/health.rs`). Vanilla JS: ES modules, one surface per file under `src/js/surfaces/`, pure logic in `src/js/domain/`, DOM helpers in `src/js/components/`. The client design system is chalk-on-slate; tokens live in `src/styles/tokens.css` and shared chalk material in `chalk.css` — do not inline colors.
 
 ## Testing Guidelines
-Core uses Deno tests named `*.test.ts`; the web API uses Jest functional tests in `tests/functional/*.spec.ts`; the UI uses Jasmine/Karma specs. Add focused tests with each behavior change. Run the relevant service test suite before opening a PR; API tests collect coverage automatically.
+Rust: unit tests live beside the code (`cargo test --lib`); the endpoint contract suite is `tests/integration.rs` (needs `TEST_DATABASE_URL` and runs serially: `cargo test --test integration -- --test-threads=1`). Client: Vitest specs beside the domain module (`src/js/domain/poker.test.js`). UI behavior is verified in the browser (play loop, auth, favorites, deep links). Add focused tests with each behavior change.
 
 ## Commit & Pull Request Guidelines
 History uses short lowercase imperative subjects such as `fix button styles` and `bring CI in line with the locally-built core`. Keep commits similarly focused. PRs should include intent, linked issues, test evidence, and UI screenshots when applicable. Verify CI-sensitive changes to CI, workflows, or core vendoring.
 
 ## Security & Configuration Tips
-Never commit secrets. Copy `.env.example` when adding API configuration, and ensure Prisma migrations and environment examples remain reproducible.
+Never commit secrets. Copy `.env.example` when adding API configuration. The Rust API reads `DB_CONNECTION_STRING`, `JWT_SECRET`, `CALC_ODDS_URL`, `CALC_ODDS_KEY`, `LEADERBOARD_MIN_GAMES`. Database schema is baselined in `src/web-api/migrations/0001_baseline.sql` and applied idempotently at startup.

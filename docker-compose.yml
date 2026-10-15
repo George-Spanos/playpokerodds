@@ -5,14 +5,13 @@ services:
     build:
       context: src/ui
       dockerfile: Dockerfile
-      args:
-        - TARGET=dev
     depends_on:
       - web-api
   migrate:
+    profiles: ['legacy']  # schema now baselined by the Rust API's migration runner
     build:
       context: src/web-api
-      target: build
+      dockerfile: Dockerfile
     command: ['npx', 'prisma', 'migrate', 'deploy']
     env_file:
       - src/web-api/.env.docker
@@ -24,11 +23,16 @@ services:
       - 3000:3000
     build:
       context: src/web-api
-    env_file:
-      - src/web-api/.env.docker
+      dockerfile: Dockerfile.rust
+    environment:
+      - DB_CONNECTION_STRING=postgresql://root:root@db:5432/gtop
+      - JWT_SECRET=SOME_SECRET_JWT_STUFF
+      - CALC_ODDS_URL=http://calc-odds-api:7071/api/calcOdds
+      - CALC_ODDS_KEY=somekey
+      - LEADERBOARD_MIN_GAMES=2
     depends_on:
-      migrate:
-        condition: service_completed_successfully
+      db:
+        condition: service_healthy
       calc-odds-api:
         condition: service_started
   calc-odds-api:
@@ -57,6 +61,3 @@ services:
       - '5432:5432'
     volumes:
       - ./postgres-data:/var/lib/postgresql/data
-volumes:
-  postgres-data:
-    external: true

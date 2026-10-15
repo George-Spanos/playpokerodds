@@ -1,8 +1,0 @@
-.toast-info {
-  background-color: var(--primary--500) !important;
-}
-.ngx-toastr {
-  box-shadow: none !important;
-  font-size: 16px !important;
-  width: 400px !important;
-}

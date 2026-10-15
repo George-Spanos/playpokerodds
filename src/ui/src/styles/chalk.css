@@ -1,0 +1,248 @@
+/* Chalk material language: panels drawn as double-line chalk frames with hand
+   drawn corner ticks; text is chalk; buttons are chalk strokes that fill on
+   active. State grammar: solid = committed, dashed = pending, ghost = last. */
+
+.panel {
+  position: relative;
+  background: var(--panel);
+  border: var(--line) solid var(--chalk-300);
+  border-radius: var(--radius-panel);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35), inset 0 0 0 4px var(--panel),
+    inset 0 0 0 5px rgba(242, 245, 239, 0.28);
+}
+
+/* corner ticks: four small chalk diagonal marks */
+.panel::before,
+.panel::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border-color: var(--chalk-200);
+  border-style: solid;
+  pointer-events: none;
+}
+.panel::before {
+  top: -7px;
+  left: -7px;
+  border-width: var(--line) 0 0 var(--line);
+  transform: rotate(-8deg);
+}
+.panel::after {
+  bottom: -7px;
+  right: -7px;
+  border-width: 0 var(--line) var(--line) 0;
+  transform: rotate(-8deg);
+}
+
+.chalk-heading {
+  font-family: var(--font-display);
+  color: var(--ink);
+  letter-spacing: 0.01em;
+  line-height: 1.15;
+}
+
+.chalk-label {
+  font-family: var(--font-chalk);
+  color: var(--ink-soft);
+  font-size: var(--text-sm);
+  letter-spacing: 0.04em;
+}
+
+.chalk-btn {
+  font-family: var(--font-chalk);
+  font-size: var(--text-lg);
+  color: var(--ink);
+  background: transparent;
+  border: var(--line) solid var(--chalk-200);
+  border-radius: var(--radius-panel);
+  padding: var(--space-2) var(--space-4);
+  cursor: pointer;
+  position: relative;
+  transition: background 120ms ease-out, color 120ms ease-out;
+}
+.chalk-btn:hover {
+  background: rgba(242, 245, 239, 0.08);
+}
+.chalk-btn:active {
+  background: var(--chalk-100);
+  color: var(--slate-900);
+}
+.chalk-btn:disabled {
+  border-style: dashed;
+  color: var(--ink-faint);
+  cursor: not-allowed;
+  background: transparent;
+}
+.chalk-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+.chalk-btn--primary {
+  border: var(--line-heavy) solid var(--accent);
+  color: var(--amber-300);
+}
+.chalk-btn--primary:active {
+  background: var(--amber-400);
+  color: var(--slate-900);
+}
+
+/* dashed = pending */
+.chalk-pending {
+  border-style: dashed;
+  color: var(--ink-soft);
+}
+/* ghost smudge = last round */
+.chalk-ghost {
+  opacity: 0.35;
+  filter: blur(0.4px);
+}
+
+/* the rail: 0-100 chalk scale */
+.rail {
+  position: relative;
+  height: 4rem;
+  border: none;
+}
+.rail-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: var(--line);
+  background: var(--chalk-300);
+  border-radius: 1px;
+}
+.rail-tick {
+  position: absolute;
+  top: 50%;
+  width: 2px;
+  height: 12px;
+  transform: translateY(-50%);
+  background: var(--chalk-500);
+}
+.rail-tick--major {
+  height: 20px;
+  background: var(--chalk-300);
+}
+.rail-thumb {
+  position: absolute;
+  top: 50%;
+  width: 6px;
+  height: 34px;
+  transform: translate(-50%, -50%) rotate(-3deg);
+  background: var(--accent);
+  border-radius: 2px;
+  transition: left 60ms linear;
+}
+.rail-thumb--locked {
+  background: var(--chalk-100);
+}
+.rail-truth {
+  position: absolute;
+  top: 50%;
+  width: var(--line-heavy);
+  height: 40px;
+  transform: translate(-50%, -50%);
+  background: var(--chalk-100);
+  animation: draw-in 380ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+@keyframes draw-in {
+  from {
+    height: 0;
+    opacity: 0;
+  }
+  to {
+    height: 40px;
+    opacity: 1;
+  }
+}
+
+/* the circled error: hand-drawn chalk ellipse via border + rotation */
+.chalk-circle {
+  position: absolute;
+  border: 2px solid var(--amber-300);
+  border-radius: 50% 46% 52% 48% / 55% 48% 52% 45%;
+  transform: rotate(-2deg);
+  animation: circle-in 300ms ease-out both;
+  pointer-events: none;
+}
+@keyframes circle-in {
+  from {
+    opacity: 0;
+    transform: rotate(-2deg) scale(1.25);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(-2deg) scale(1);
+  }
+}
+
+/* cards dealt onto chalk outlines */
+.card-slot {
+  width: 72px;
+  height: 100px;
+  border: var(--line) dashed var(--chalk-500);
+  border-radius: var(--radius-card);
+  background: rgba(242, 245, 239, 0.03);
+}
+.card-slot--filled {
+  border-style: solid;
+  border-color: transparent;
+  background: none;
+}
+.card-slot img {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--radius-card);
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.45);
+}
+
+/* chalk nav tabs */
+.chalk-nav {
+  display: flex;
+  gap: var(--space-4);
+  align-items: center;
+  height: var(--nav-height);
+}
+.chalk-nav a {
+  font-family: var(--font-chalk);
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-size: var(--text-lg);
+  padding: 2px 4px;
+  border-bottom: var(--line) solid transparent;
+}
+.chalk-nav a:hover {
+  color: var(--ink);
+}
+.chalk-nav a[aria-current="page"] {
+  color: var(--ink);
+  border-bottom-color: var(--accent);
+}
+.chalk-nav a:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: 2px;
+}
+
+/* browser surface theming (craft floor) */
+::selection {
+  background: rgba(217, 169, 78, 0.35);
+  color: var(--chalk-100);
+}
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--chalk-500) var(--slate-950);
+}
+input,
+textarea {
+  caret-color: var(--amber-300);
+}
+input[type="number"] {
+  font-family: var(--font-numbers);
+}

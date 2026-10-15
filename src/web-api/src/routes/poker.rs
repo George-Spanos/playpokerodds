@@ -173,7 +173,7 @@ pub async fn post_new_round_answer(
         "INSERT INTO \"Rounds\" (\"id\", \"myHand\", \"opponentsHands\", \"board\", \"odds\") VALUES ($1, $2, $3, $4, $5)",
     )
     .bind(&round_id)
-    .bind(serde_json::to_value(&round).map_err(internal_error)?)
+    .bind(serde_json::to_value(&round.my_hand).map_err(internal_error)?)
     .bind(serde_json::to_value(&round.opponents_hands).map_err(internal_error)?)
     .bind(serde_json::to_value(&round.board).map_err(internal_error)?)
     .bind(odds_dec)
