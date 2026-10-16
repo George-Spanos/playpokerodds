@@ -52,7 +52,20 @@ function buildTablePanel() {
 }
 
 function buildGuessPanel() {
-  ui.guessValue = el('div', { class: 'guess-value' }, '—');
+  ui.guessValue = el('input', {
+    class: 'guess-value-input',
+    type: 'text',
+    inputmode: 'decimal',
+    autocomplete: 'off',
+    'aria-label': 'Guess your winning chances percentage',
+  });
+  ui.guessValue.value = '50';
+  const guessValueWrap = el(
+    'div',
+    { class: 'guess-value-wrap' },
+    ui.guessValue,
+    el('span', { class: 'guess-value-unit', text: '%' })
+  );
   ui.rail = buildRail();
   ui.revealRow = el('div', { class: 'reveal-row' });
   ui.verdict = el('div', { class: 'verdict', 'aria-live': 'polite' });
@@ -60,7 +73,7 @@ function buildGuessPanel() {
     'div',
     { class: 'panel guess-panel' },
     el('h3', { class: 'chalk-heading', style: 'font-size:1.5rem; margin:0', text: 'Your guess' }),
-    ui.guessValue,
+    guessValueWrap,
     ui.rail.wrapper,
     ui.revealRow,
     ui.verdict
@@ -90,13 +103,37 @@ function buildRail() {
   let value = 50;
   let locked = false;
 
-  function setEstimate(v) {
+  function setEstimate(v, syncField = true) {
     if (locked) return;
     value = Math.max(0, Math.min(100, v));
     thumb.style.left = `${value}%`;
-    ui.guessValue.innerHTML = '';
-    ui.guessValue.append(document.createTextNode(String(value)), el('span', { class: 'unit', text: ' %' }));
+    if (syncField) ui.guessValue.value = String(value);
   }
+
+  // Typing drives the thumb live. The field is left untouched mid-typing so the
+  // caret and partial text are not rewritten; empty/partial input is ignored
+  // while typing and only normalised on commit (change/blur/Enter).
+  ui.guessValue.addEventListener('input', () => {
+    if (locked) return;
+    const digits = ui.guessValue.value.replace(/\D/g, '');
+    if (digits === '') return;
+    setEstimate(parseInt(digits, 10), false);
+  });
+
+  function commitGuess() {
+    if (locked) return;
+    const digits = ui.guessValue.value.replace(/\D/g, '');
+    setEstimate(digits === '' ? 50 : parseInt(digits, 10));
+  }
+  ui.guessValue.addEventListener('change', commitGuess);
+  ui.guessValue.addEventListener('blur', commitGuess);
+  ui.guessValue.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      commitGuess();
+      ui.guessValue.blur();
+    }
+  });
 
   function pointerToValue(e) {
     if (locked) return;
@@ -126,11 +163,20 @@ function buildRail() {
   return {
     wrapper,
     get value() { return value; },
-    lock() { locked = true; thumb.classList.add('rail-thumb--locked'); },
-    unlock() { locked = false; thumb.classList.remove('rail-thumb--locked'); },
+    lock() { locked = true; thumb.classList.add('rail-thumb--locked'); ui.guessValue.readOnly = true; },
+    unlock() { locked = false; thumb.classList.remove('rail-thumb--locked'); ui.guessValue.readOnly = false; },
+    reset(v = 50) { setEstimate(v); },
     markTruth(odds) {
       const truth = el('div', { class: 'rail-truth', style: `left:${odds}%` });
       wrapper.append(truth);
+      wrapper.append(
+        el('span', {
+          class: 'rail-truth-label',
+          style: `left:${odds}%`,
+          text: String(odds),
+          'aria-hidden': 'true',
+        })
+      );
     },
   };
 }
@@ -143,15 +189,15 @@ async function deal() {
   // state grammar: the committed guess becomes a ghost smudge for the last round
   const lastThumb = ui.rail.wrapper.querySelector('.rail-thumb');
   const wasLocked = lastThumb?.classList.contains('rail-thumb--locked') ?? false;
-  ui.rail.wrapper.querySelectorAll('.rail-truth, .chalk-circle, .chalk-burst, .rail-thumb--ghost').forEach((n) => n.remove());
+  const lastLeft = lastThumb?.style.left;
+  ui.rail.wrapper.querySelectorAll('.rail-truth, .rail-truth-label, .rail-thumb--ghost').forEach((n) => n.remove());
   ui.rail.unlock();
   ui.rail.wrapper.setAttribute('aria-disabled', 'false');
+  ui.rail.reset(50);
   if (lastThumb && wasLocked) {
-    const ghost = el('div', { class: 'rail-thumb rail-thumb--ghost chalk-ghost', style: `left:${lastThumb.style.left}` });
+    const ghost = el('div', { class: 'rail-thumb rail-thumb--ghost chalk-ghost', style: `left:${lastLeft}` });
     ui.rail.wrapper.append(ghost);
   }
-  ui.guessValue.innerHTML = '';
-  ui.guessValue.append(document.createTextNode('50'), el('span', { class: 'unit', text: ' %' }));
   ui.verdict.className = 'verdict';
   ui.verdict.textContent = '';
   ui.revealRow.innerHTML = '';
@@ -295,31 +341,7 @@ function reveal(answer) {
   ui.rail.lock();
   ui.rail.markTruth(answer.odds);
   const score = calculateGuessScore(state.estimate ?? answer.estimate, answer.odds);
-
-  const guessPct = state.estimate ?? answer.estimate;
-  const truthPct = answer.odds;
-  const gap = Math.abs(truthPct - guessPct);
   const accurate = scoreIsAccurate(score);
-
-  // The circled gap only reads when there IS a visible gap between the two
-  // marks. When the guess is nailed, the marks overlap: instead of a degenerate
-  // ring around one point, draw a chalk burst — a small radial emphasis
-  // centered on the marks — and lead the verdict with the win.
-  if (gap >= 2) {
-    const circle = el('div', {
-      class: 'chalk-circle',
-      style: `left:${Math.min(guessPct, truthPct)}%; width:${Math.max(4, gap)}%; top:-14px; height:calc(100% + 28px)`,
-    });
-    ui.rail.wrapper.append(circle);
-  } else {
-    const centerPct = (guessPct + truthPct) / 2;
-    const burst = el('div', {
-      class: 'chalk-burst',
-      style: `left:${centerPct}%`,
-      'aria-hidden': 'true',
-    });
-    ui.rail.wrapper.append(burst);
-  }
 
   ui.verdict.textContent = accurate
     ? `Nailed it — off by only ${score.toFixed(2)}`
